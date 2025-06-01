@@ -3,6 +3,8 @@ import { Context } from "../model/Context";
 import { DataTable } from 'mantine-datatable';
 import { Box, Grid } from "@mantine/core";
 import { StatBlockDisplay } from "./StatBlockDisplay";
+import { NavActionButton } from "./NavActionButton";
+import { FaEdit } from "react-icons/fa";
 
 export const Bestiary = () => {
     const { bestiary } = useContext(Context);
@@ -24,6 +26,7 @@ export const Bestiary = () => {
                             { accessor: '1.name', title: 'Name', sortable: true },
                             { accessor: '1.type', title: 'Type' },
                             { accessor: '1.challengeRating', title: 'CR', sortable: true },
+                            { accessor: '0', render: (record) => <NavActionButton icon={<FaEdit />} href={`/statblock?id=${record[0]}`} />}
                         ]}
                         onRowClick={(record) => selectStatBlock(record.record[0])}
                         idAccessor="0"

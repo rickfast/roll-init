@@ -20,6 +20,7 @@ import { PiSparkleDuotone } from 'react-icons/pi';
 import { ImportForm } from './components/ImportForm';
 import { Bestiary } from './components/Bestiary';
 import { AdminPanel } from './components/AdminPanel';
+import { FaEdit } from 'react-icons/fa';
 
 export default function App() {
   return (
@@ -40,7 +41,8 @@ export default function App() {
             </AppShellHeader>
             <AppShell.Navbar p="md">
               <NavLink label="Initiative Tracker" href="/track" key="Initiative Tracker" icon={<LuSwords />} />
-              <NavLink label="Generate Stat Block" href="/generate" key="Generate Stat Block" icon={<PiSparkleDuotone />} />
+              <NavLink label="Stat Block Editor" href="/statblock" key="Edit Stat Block" icon={<FaEdit />} />
+              <NavLink label="Stat Block Generator" href="/generate" key="Generate Stat Block" icon={<PiSparkleDuotone />} />
               <NavLink label="Bestiary" href="/bestiary" key="Bestiary" icon={<GiSpikedDragonHead />} />
               <NavLink label="Import Bestiary" href="/import" key="Import Bestiary" icon={<TbDatabaseImport />} />
               <NavLink label="Settings" href="/admin" key="Settings" icon={<IoSettingsOutline />} />
@@ -53,6 +55,7 @@ export default function App() {
                 <Route path="/track" element={<InitiativeTracker />} />
                 <Route path="/import" element={<ImportForm />} />
                 <Route path="/admin" element={<AdminPanel />} />
+                <Route path="/statblock" element={<StatBlockForm aiEnabled={false} />} />
               </Routes>
             </AppShell.Main>
           </AppShell>

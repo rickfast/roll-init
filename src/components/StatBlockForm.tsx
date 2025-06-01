@@ -20,6 +20,7 @@ import { useContext, useState } from 'react';
 import { StatBlockDisplay } from './StatBlockDisplay';
 import { generateStatBlock } from '../action/ai/generateStatBlock';
 import { Context } from '../model/Context';
+import { useSearchParams } from 'react-router';
 
 const sizeOptions = ['Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan'];
 const damageTypes = [
@@ -38,54 +39,69 @@ interface Props {
 }
 
 export function StatBlockForm({ aiEnabled = true }: Props) {
-    const form = useForm<StatBlock>({
-        initialValues: {
-            name: '',
-            size: 'Medium',
-            type: '',
-            alignment: '',
-            armorClass: 0,
-            hitPoints: {
-                value: 0,
-                hitDice: '',
-            },
-            challengeRating: 0,
-            speed: [{ type: 'walk', speed: '30 ft.' }],
-            savingThrows: {
-                str: 0,
-                dex: 0,
-                con: 0,
-                int: 0,
-                wis: 0,
-                cha: 0,
-            },
-            senses: '',
-            skills: {},
-            spellcasting: undefined,
-            subtype: '',
-            abilityScores: {
-                str: 10,
-                dex: 10,
-                con: 10,
-                int: 10,
-                wis: 10,
-                cha: 10,
-            },
-            damageVulnerabilities: [],
-            damageResistances: [],
-            damageImmunities: [],
-            conditionImmunities: [],
-            languages: [],
-            traits: [],
-            actions: [],
+    const [searchParams] = useSearchParams();
+    const { addMonster, apiKey, bestiary } = useContext(Context);
+    let editable = false;
+
+    let initialValues = {
+        name: '',
+        size: 'Medium',
+        type: '',
+        alignment: '',
+        armorClass: 0,
+        hitPoints: {
+            value: 0,
+            hitDice: '',
+        },
+        challengeRating: 0,
+        speed: [{ type: 'walk', speed: '30 ft.' }],
+        savingThrows: {
+            str: 0,
+            dex: 0,
+            con: 0,
+            int: 0,
+            wis: 0,
+            cha: 0,
+        },
+        senses: '',
+        skills: {},
+        spellcasting: undefined,
+        subtype: '',
+        abilityScores: {
+            str: 10,
+            dex: 10,
+            con: 10,
+            int: 10,
+            wis: 10,
+            cha: 10,
+        },
+        damageVulnerabilities: [],
+        damageResistances: [],
+        damageImmunities: [],
+        conditionImmunities: [],
+        languages: [],
+        traits: [],
+        actions: [],
+    } as StatBlock;
+
+    if (searchParams.get('id')) {
+        const monster = bestiary[searchParams.get('id')!];
+
+        if (monster) {
+            initialValues = monster;
+            editable = true;
         }
+    }
+
+    const form = useForm<StatBlock>({
+        initialValues
     });
 
-    const [traits, setTraits] = useState<{ name: string; desc: string }[]>([]);
-    const [actions, setActions] = useState<{ name: string; desc: string }[]>([]);
+    const [traits, setTraits] = useState<{ name: string; desc: string }[]>(initialValues.traits || []);
+    const [actions, setActions] = useState<{ name: string; desc: string }[]>(initialValues.actions || []);
     const [aiLoading, setAiLoading] = useState(false);
-    const [edit, setEdit] = useState(false);
-    const { addMonster, apiKey } = useContext(Context);
+    const [edit, setEdit] = useState(editable);
+    const valid = form.values.name && form.values.challengeRating >= 0 && form.values.hp && form.values.armorClass;
 
     const addEntry = (setFn: any) => setFn((prev: any) => [...prev, { name: '', desc: '' }]);
     const updateEntry = (setFn: any, index: number, field: string, value: string) =>
@@ -256,10 +272,10 @@ export function StatBlockForm({ aiEnabled = true }: Props) {
                                 <Divider />
                             </>}
                             <Button type="submit" onClick={() => {
-                                addMonster(form.values);                               
-                            }} disabled={!form.values.name}>Save Stat Block</Button>
-                            { aiEnabled && <Button loading={aiLoading} onClick={generate} disabled={!form.values.name}>Generate with AI</Button> }
-                            <Button onClick={() => setEdit(!edit)}>Edit Stat Block</Button>
+                                addMonster(form.values);
+                            }} disabled={!valid}>Save Stat Block</Button>
+                            {aiEnabled && <Button loading={aiLoading} onClick={generate} disabled={!form.values.name && !form.values.challengeRating}>Generate with AI</Button>}
+                            {aiEnabled && <Button onClick={() => setEdit(!edit)}>Edit Stat Block</Button>}
                         </Stack>
                     </Grid.Col>
                     <Grid.Col span={6}>
