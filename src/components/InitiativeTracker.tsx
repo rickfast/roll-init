@@ -5,6 +5,7 @@ import { useContext } from "react";
 import { Context } from "../model/Context";
 import { PiPlayBold } from "react-icons/pi";
 import { FaDiceD20, FaSortAmountDown } from 'react-icons/fa';
+import { RiSkullLine } from "react-icons/ri";
 import { NumberCell } from "./NumberCell";
 import { ClickInput } from "./ClickInput";
 import { FeatureModal } from "./FeatureModal";
@@ -16,6 +17,7 @@ export const InitiativeTracker = () => {
         selected, 
         addCombatant, 
         updateCombatant, 
+        deleteCombatant,
         next, 
         rollInitiative, 
         rollAllInitiative, 
@@ -76,6 +78,12 @@ export const InitiativeTracker = () => {
                                         <FaDiceD20 />
                                     </ActionIcon>
                                     <FeatureModal statBlock={combatant.statBlock!} />
+                                    <ActionIcon variant="outline" onClick={() => deleteCombatant(id)} style={{ marginLeft: '4px' }}>
+                                        <RiSkullLine />
+                                    </ActionIcon>
+                                    {/* <ActionIcon variant="outline" onClick={() => duplicateCombatant(id)} style={{ marginLeft: '4px' }}>
+                                        <MdContentCopy />
+                                    </ActionIcon> */}
                                 </Table.Td>
                             </Table.Tr>
                         })}

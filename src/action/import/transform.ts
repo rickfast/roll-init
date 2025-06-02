@@ -1,6 +1,6 @@
-import { DamageType, Language, StatBlock } from "../../../../5e-import/StatBlock";
-import { Alignment, ConditionI, ConditionImmuneClass, CRClass, FluffyType, Immune, Monster, PurpleType, ResistClass, Size, Speed, TypeElement, VulnerableClass } from "../../model/5etools/Bestiary.ts";
-import { Size as StatBlockSize, Speed as StatBlockSpeed } from "../../../../5e-import/StatBlock";
+import { DamageType, Language, StatBlock } from "../../model/StatBlock";
+import { Alignment, ConditionI, ConditionImmuneClass, CRClass, FluffyType, Immune, Initiative, Monster, PurpleType, ResistClass, Size, Speed, TypeElement, VulnerableClass } from "../../model/5etools/Bestiary.ts";
+import { Size as StatBlockSize, Speed as StatBlockSpeed } from "../../model/StatBlock";
 
 function mapSize(size: Size[]): StatBlockSize {
     if (!size || size.length === 0) {
@@ -121,6 +121,17 @@ function mapSpeed(speed: Speed): StatBlockSpeed[] {
     });
 }
 
+function mapInitiative(initiative: Initiative | undefined): number {
+    if (!initiative) {
+        return 0; // Default initiative if not provided
+    } else if (typeof initiative === "number") {
+        return initiative;
+    } else if (initiative && typeof initiative === "object" && initiative.hasOwnProperty("proficiency")) {
+        return initiative.proficiency;
+    }
+    return 0;
+}
+
 export function transform(monster: Monster): StatBlock {
     console.log(`Transforming monster: ${JSON.stringify(monster)}`);
     const statBlock: StatBlock = {
@@ -132,6 +143,7 @@ export function transform(monster: Monster): StatBlock {
         armorClass: monster.ac[0] || 0,
         hitPoints: { value: monster.hp.average, hitDice: monster.hp.formula },
         speed: mapSpeed(monster.speed),
+        initiativeBonus: mapInitiative(monster.initiative),
         abilityScores: {
             str: monster.str,
             dex: monster.dex,

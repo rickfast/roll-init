@@ -101,8 +101,6 @@ export function StatBlockForm({ aiEnabled = true }: Props) {
     const [actions, setActions] = useState<{ name: string; desc: string }[]>(initialValues.actions || []);
     const [aiLoading, setAiLoading] = useState(false);
     const [edit, setEdit] = useState(editable);
-    const valid = form.values.name && form.values.challengeRating >= 0 && form.values.hp && form.values.armorClass;
-
     const addEntry = (setFn: any) => setFn((prev: any) => [...prev, { name: '', desc: '' }]);
     const updateEntry = (setFn: any, index: number, field: string, value: string) =>
         setFn((prev: any[]) => {
@@ -273,13 +271,13 @@ export function StatBlockForm({ aiEnabled = true }: Props) {
                             </>}
                             <Button type="submit" onClick={() => {
                                 addMonster(form.values);
-                            }} disabled={!valid}>Save Stat Block</Button>
+                            }} disabled={!form.values.name}>Save Stat Block</Button>
                             {aiEnabled && <Button loading={aiLoading} onClick={generate} disabled={!form.values.name && !form.values.challengeRating}>Generate with AI</Button>}
                             {aiEnabled && <Button onClick={() => setEdit(!edit)}>Edit Stat Block</Button>}
                         </Stack>
                     </Grid.Col>
                     <Grid.Col span={6}>
-                        <StatBlockDisplay statBlock={form.values} loading={aiLoading} />
+                        { <StatBlockDisplay statBlock={form.values} loading={aiLoading} /> }
                     </Grid.Col>
                 </Grid>
             </form>

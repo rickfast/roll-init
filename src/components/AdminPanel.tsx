@@ -1,4 +1,4 @@
-import { Button, Fieldset, Stack, TextInput } from "@mantine/core";
+import { Button, Fieldset, PasswordInput, Stack, TextInput } from "@mantine/core";
 import { store } from "../model/store";
 import { Form, useForm } from "@mantine/form";
 import { Config } from "../model/Config";
@@ -19,7 +19,7 @@ export const AdminPanel = () => {
             <Form form={form}>
                 <Stack gap="md">
                     <Fieldset legend="OpenAI Configuration">
-                        <TextInput label="OpenAI API Key" placeholder="sk-..." {...form.getInputProps('apiKey')} required />
+                        <PasswordInput label="OpenAI API Key" placeholder="sk-..." {...form.getInputProps('apiKey')} required />
                     </Fieldset>
                     <Button disabled={!form.values.apiKey}
                         type="submit"

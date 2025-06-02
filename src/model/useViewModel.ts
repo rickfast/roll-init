@@ -24,6 +24,7 @@ export interface InitiativeTrackerViewModel {
   hasCondition: (id: string, condition: string) => boolean;
   deleteCombatant: (id: string) => void;
   updateCombatant: (id: string, combatant: Partial<Combatant>) => void;
+  duplicateCombatant: (id: string) => void;
 }
 
 export interface BestiaryViewModel {
@@ -64,7 +65,20 @@ export function useViewModel(initialData: SaveData): InitiativeTrackerViewModel 
       })
       .catch((error) => console.error('Error saving:', error));
   }
-  
+
+  const duplicateCombatant = (id: string) => {
+    const combatant = combatants.get(id);
+
+    if (!combatant) {
+      console.warn(`Combatant with id ${id} not found`);
+      return;
+    }
+
+    const newId = crypto.randomUUID().toString();
+    const newCombatant = { ...combatant, id: newId, discriminator: undefined }; // Reset discriminator for new combatant
+    setCombatants(new Map(combatants.set(newId, newCombatant)));
+  }
+
   const addMonster = (monster: StatBlock) => {
     const monsterId = crypto.randomUUID().toString();
     setBestiary(prev => ({ ...prev, [monster.name]: { ...monster, id: monsterId } }));
@@ -162,18 +176,18 @@ export function useViewModel(initialData: SaveData): InitiativeTrackerViewModel 
 
   const setInitiative = (id: string, initiative: number) => {
     const combatant = getCombatantById(id)!;
-    setCombatants(new Map(combatants.set(id, { ...combatant, initiative })))
+    const initiativeBonus = combatant.statBlock?.initiativeBonus || 0;
+    setCombatants(new Map(combatants.set(id, { ...combatant, initiative: initiative + initiativeBonus })))
   }
 
   const rollInitiative = (id: string) => {
-    const combatant = getCombatantById(id)!;
     const initiative = roll20();
-    setCombatants(new Map(combatants.set(id, { ...combatant, initiative })))
+    setInitiative(id, initiative)
   }
 
   const rollAllInitiative = () => {
-    const all: [string, Combatant][] = allCombatants().map(entry => {
-      return [entry[0], { ...entry[1], init: roll20() }]
+    const all: [string, Combatant][] = allCombatants().map(([key, combatant]) => {
+      return [key, { ...combatant, initiative: roll20() + (combatant.statBlock?.initiativeBonus || 0) }]
     })
 
     setCombatants(new Map(all.sort((a, b) => b[1].initiative - a[1].initiative)));
@@ -187,10 +201,6 @@ export function useViewModel(initialData: SaveData): InitiativeTrackerViewModel 
     }
     const updatedCombatant = { ...existingCombatant, ...combatant };
     setCombatants(new Map(combatants.set(id, updatedCombatant)));
-    // save({
-    //   selected,
-    //   combatants: Array.from(combatants.entries())
-    // })
   }
 
   const hasCondition = (id: string, condition: string) => {
@@ -227,6 +237,7 @@ export function useViewModel(initialData: SaveData): InitiativeTrackerViewModel 
     updateCombatant,
     hasCondition,
     deleteCombatant,
+    duplicateCombatant,
     addMonster,
     removeMonster,
     updateMonster,

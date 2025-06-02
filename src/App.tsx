@@ -31,6 +31,11 @@ export default function App() {
             header={{ height: 60 }}
             navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: true } }}
             padding="md"
+            styles={{
+              header: {
+                fontFamily: 'Centra No2 Book'
+              }
+            }}
           >
             <AppShellHeader>
               <Group h="100%" px="md">
