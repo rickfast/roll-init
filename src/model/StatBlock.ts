@@ -2,6 +2,7 @@ export interface StatBlock {
     abilityScores: AbilityScores;
     actions: Feature[];
     alignment: string;
+    initiativeBonus?: number;
     armorClass: number;// | ArmorClassObject;
     bonusActions?: Feature[];
     challengeRating: number;

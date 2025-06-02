@@ -1,6 +1,6 @@
 import { Bestiary, Monster } from "../../model/5etools/Bestiary.ts";
 import { transform } from "./transform.ts";
-import { StatBlock } from "../../../../5e-import/StatBlock.ts";
+import { StatBlock } from "../../model/StatBlock.ts";
 
 export function importBestiary(json: string) {
     function modifier(mod: string): string {
@@ -48,14 +48,8 @@ export function importBestiary(json: string) {
     }
 
     function sanitizeContent(content: string): string {
-        content = content.replace(/\{@(\w+)(?:\s+([^}]+))?\}/g, (_, token, value) => {
+        return content = content.replace(/\{@(\w+)(?:\s+([^}]+))?\}/g, (_, token, value) => {
             const evaluated = evaluate(token, value ?? "");
-            return evaluated;
-        });
-        return content.replace(/\{@(\w+)\s+([^}]+)\}/g, (_, token, value) => {
-            // console.log(`Sanitizing token: ${token} with value: ${value}`);
-            const evaluated = evaluate(token, value);
-            // console.log(`Evaluated to: ${evaluated}`);
             return evaluated;
         });
     }

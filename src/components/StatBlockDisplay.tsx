@@ -67,7 +67,7 @@ export const StatBlockDisplay: React.FC<Props> = ({ statBlock, loading }) => {
     );
 
     const display = name && hitPoints && speed && abilityScores && savingThrows;
-    
+
     if (loading) {
         return <Stack gap={'xs'}>
             <Skeleton height={40} width="100%" />
@@ -97,9 +97,10 @@ export const StatBlockDisplay: React.FC<Props> = ({ statBlock, loading }) => {
 
             <Group gap="md" grow>
                 <Text><strong>Saving Throws:</strong>&nbsp;
-                    {Object.entries(savingThrows).map(([key, value]) => (
-                        value != 0 && `${key.toUpperCase()} ${value > 0 ? `+${value}` : `${value}`}`
-                    )).join(', ')}
+                    {Object.entries(savingThrows).filter(([_, value]) => value)
+                        .map(([key, value]) => (
+                            value && `${key.toUpperCase()} ${value > 0 ? `+${value}` : `${value}`}`
+                        )).join(', ')}
                 </Text>
             </Group>
 
@@ -121,7 +122,7 @@ export const StatBlockDisplay: React.FC<Props> = ({ statBlock, loading }) => {
 
             <Divider labelPosition="center" />
             <Group gap="md">
-                { senses && <Text><strong>Senses:</strong> {senses}</Text> }
+                {senses && <Text><strong>Senses:</strong> {senses}</Text>}
                 <Text><strong>Languages:</strong> {languages.join(', ')}</Text>
                 <Text><strong>CR:</strong> {challengeRating}</Text>
             </Group>

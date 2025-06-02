@@ -5,6 +5,7 @@ import { CodeHighlight, CodeHighlightAdapterProvider, createShikiAdapter } from 
 import React, { useContext, useState } from "react";
 import { importBestiary } from "../action/import/import";
 import { Context } from "../model/Context";
+import { showNotification } from '@mantine/notifications';
 
 async function loadShiki() {
     const { createHighlighter } = await import('shiki');
@@ -34,6 +35,7 @@ export const ImportForm = () => {
 
         importMonsters(JSON.parse(json));
         setLoading(false);
+        showNotification({ message: 'Bestiary successfully imported.' });
     }
 
     const onFileChange = (file: File) => {

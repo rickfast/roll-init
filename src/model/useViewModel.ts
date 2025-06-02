@@ -7,7 +7,7 @@ function roll20(): number {
   return Math.floor(Math.random() * 20) + 1;
 }
 
-export interface InitiativeTrackerViewModel {
+export interface ViewModel {
   selected: number;
   sort: () => void;
   getSelectedCombatant: () => Combatant;
@@ -24,34 +24,42 @@ export interface InitiativeTrackerViewModel {
   hasCondition: (id: string, condition: string) => boolean;
   deleteCombatant: (id: string) => void;
   updateCombatant: (id: string, combatant: Partial<Combatant>) => void;
-}
-
-export interface BestiaryViewModel {
+  duplicateCombatant: (id: string) => void;
   bestiary: { [monsterId: string]: StatBlock };
   addMonster: (monster: StatBlock) => void;
   removeMonster: (monsterId: string) => void;
   updateMonster: (monsterId: string, updatedData: Partial<StatBlock>) => void;
   importMonsters: (monsters: { [monsterId: string]: StatBlock }) => void;
   save: () => void
-}
-
-export interface ConfigViewModel {
   apiKey?: string;
   setApiKey: (apiKey: string) => void;
+  saving: boolean;
+  notifications: Set<string>;
+  pushNotification: (notification: string) => void;
 }
 
-export function useViewModel(initialData: SaveData): InitiativeTrackerViewModel & BestiaryViewModel & ConfigViewModel {
+export function useViewModel(initialData: SaveData): ViewModel {
   const tracker = initialData.tracker || { combatants: [], selected: 0 };
   const [bestiary, setBestiary] = useState<{ [monsterId: string]: StatBlock }>({ ...initialData.bestiary });
   const [combatants, setCombatantz] = useState<Map<string, Combatant>>(new Map(tracker.combatants));
   const [selected, setSelected] = useState(tracker.selected);
   const [apiKey, setApiKey] = useState<string | undefined>(initialData.apiKey);
+  const [notifications, setNotifications] = useState(new Set<string>());
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     save();
   }, [bestiary, apiKey, combatants, selected]);
 
+  const pushNotification = (notification: string) => {
+    if (!notifications.has(notification)) {
+      notifications.add(notification);
+      setNotifications(notifications);
+    }
+  }
+
   const save = () => {
+    setSaving(true);
     store.update({
       bestiary,
       tracker: {
@@ -60,11 +68,27 @@ export function useViewModel(initialData: SaveData): InitiativeTrackerViewModel 
       }
     })
       .then(() => {
-        console.log('Save successful')
+        setTimeout(() => setSaving(false), 2000);
       })
-      .catch((error) => console.error('Error saving:', error));
+      .catch((error) => {
+        setSaving(false);
+        pushNotification(`An error occurred while saving: ${error}`);
+      });
   }
-  
+
+  const duplicateCombatant = (id: string) => {
+    const combatant = combatants.get(id);
+
+    if (!combatant) {
+      console.warn(`Combatant with id ${id} not found`);
+      return;
+    }
+
+    const newId = crypto.randomUUID().toString();
+    const newCombatant = { ...combatant, id: newId, discriminator: undefined }; // Reset discriminator for new combatant
+    setCombatants(new Map(combatants.set(newId, newCombatant)));
+  }
+
   const addMonster = (monster: StatBlock) => {
     const monsterId = crypto.randomUUID().toString();
     setBestiary(prev => ({ ...prev, [monster.name]: { ...monster, id: monsterId } }));
@@ -162,18 +186,18 @@ export function useViewModel(initialData: SaveData): InitiativeTrackerViewModel 
 
   const setInitiative = (id: string, initiative: number) => {
     const combatant = getCombatantById(id)!;
-    setCombatants(new Map(combatants.set(id, { ...combatant, initiative })))
+    const initiativeBonus = combatant.statBlock?.initiativeBonus || 0;
+    setCombatants(new Map(combatants.set(id, { ...combatant, initiative: initiative + initiativeBonus })))
   }
 
   const rollInitiative = (id: string) => {
-    const combatant = getCombatantById(id)!;
     const initiative = roll20();
-    setCombatants(new Map(combatants.set(id, { ...combatant, initiative })))
+    setInitiative(id, initiative)
   }
 
   const rollAllInitiative = () => {
-    const all: [string, Combatant][] = allCombatants().map(entry => {
-      return [entry[0], { ...entry[1], init: roll20() }]
+    const all: [string, Combatant][] = allCombatants().map(([key, combatant]) => {
+      return [key, { ...combatant, initiative: roll20() + (combatant.statBlock?.initiativeBonus || 0) }]
     })
 
     setCombatants(new Map(all.sort((a, b) => b[1].initiative - a[1].initiative)));
@@ -187,10 +211,6 @@ export function useViewModel(initialData: SaveData): InitiativeTrackerViewModel 
     }
     const updatedCombatant = { ...existingCombatant, ...combatant };
     setCombatants(new Map(combatants.set(id, updatedCombatant)));
-    // save({
-    //   selected,
-    //   combatants: Array.from(combatants.entries())
-    // })
   }
 
   const hasCondition = (id: string, condition: string) => {
@@ -227,6 +247,7 @@ export function useViewModel(initialData: SaveData): InitiativeTrackerViewModel 
     updateCombatant,
     hasCondition,
     deleteCombatant,
+    duplicateCombatant,
     addMonster,
     removeMonster,
     updateMonster,
@@ -234,6 +255,9 @@ export function useViewModel(initialData: SaveData): InitiativeTrackerViewModel 
     bestiary,
     save,
     apiKey,
-    setApiKey
+    setApiKey,
+    saving,
+    notifications,
+    pushNotification
   }
 }
