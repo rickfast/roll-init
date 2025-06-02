@@ -7,7 +7,7 @@ function roll20(): number {
   return Math.floor(Math.random() * 20) + 1;
 }
 
-export interface InitiativeTrackerViewModel {
+export interface ViewModel {
   selected: number;
   sort: () => void;
   getSelectedCombatant: () => Combatant;
@@ -25,34 +25,41 @@ export interface InitiativeTrackerViewModel {
   deleteCombatant: (id: string) => void;
   updateCombatant: (id: string, combatant: Partial<Combatant>) => void;
   duplicateCombatant: (id: string) => void;
-}
-
-export interface BestiaryViewModel {
   bestiary: { [monsterId: string]: StatBlock };
   addMonster: (monster: StatBlock) => void;
   removeMonster: (monsterId: string) => void;
   updateMonster: (monsterId: string, updatedData: Partial<StatBlock>) => void;
   importMonsters: (monsters: { [monsterId: string]: StatBlock }) => void;
   save: () => void
-}
-
-export interface ConfigViewModel {
   apiKey?: string;
   setApiKey: (apiKey: string) => void;
+  saving: boolean;
+  notifications: Set<string>;
+  pushNotification: (notification: string) => void;
 }
 
-export function useViewModel(initialData: SaveData): InitiativeTrackerViewModel & BestiaryViewModel & ConfigViewModel {
+export function useViewModel(initialData: SaveData): ViewModel {
   const tracker = initialData.tracker || { combatants: [], selected: 0 };
   const [bestiary, setBestiary] = useState<{ [monsterId: string]: StatBlock }>({ ...initialData.bestiary });
   const [combatants, setCombatantz] = useState<Map<string, Combatant>>(new Map(tracker.combatants));
   const [selected, setSelected] = useState(tracker.selected);
   const [apiKey, setApiKey] = useState<string | undefined>(initialData.apiKey);
+  const [notifications, setNotifications] = useState(new Set<string>());
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     save();
   }, [bestiary, apiKey, combatants, selected]);
 
+  const pushNotification = (notification: string) => {
+    if (!notifications.has(notification)) {
+      notifications.add(notification);
+      setNotifications(notifications);
+    }
+  }
+
   const save = () => {
+    setSaving(true);
     store.update({
       bestiary,
       tracker: {
@@ -61,9 +68,12 @@ export function useViewModel(initialData: SaveData): InitiativeTrackerViewModel 
       }
     })
       .then(() => {
-        console.log('Save successful')
+        setTimeout(() => setSaving(false), 2000);
       })
-      .catch((error) => console.error('Error saving:', error));
+      .catch((error) => {
+        setSaving(false);
+        pushNotification(`An error occurred while saving: ${error}`);
+      });
   }
 
   const duplicateCombatant = (id: string) => {
@@ -245,6 +255,9 @@ export function useViewModel(initialData: SaveData): InitiativeTrackerViewModel 
     bestiary,
     save,
     apiKey,
-    setApiKey
+    setApiKey,
+    saving,
+    notifications,
+    pushNotification
   }
 }

@@ -6,6 +6,7 @@ import { NavActionButton } from "./NavActionButton";
 import { FaEdit } from "react-icons/fa";
 import { TrackActionIcon } from "./TrackActionIcon";
 import { fromStatBlock } from "../model/Combatant";
+import { showNotification } from "@mantine/notifications";
 
 export const Bestiary = () => {
     const { bestiary, addCombatant } = useContext(Context);
@@ -33,7 +34,12 @@ export const Bestiary = () => {
                                     <Table.Td>
                                         <NavActionButton icon={<FaEdit />} href={`/statblock?id=${id}`} />
                                         <TrackActionIcon onChange={(quantity) => {
-                                            addCombatant(fromStatBlock(monster), quantity) 
+                                            addCombatant(fromStatBlock(monster), quantity);
+                                            showNotification({
+                                                title: 'Combatant Added',
+                                                message: `Added ${quantity} ${monster.name}(s) to Initiative Tracker.`,
+                                                color: 'green',
+                                            });
                                         }} />
                                     </Table.Td>
                                 </Table.Tr>

@@ -1,11 +1,11 @@
 'use client';
 
 import React, { createContext, ReactNode, useEffect } from "react";
-import { BestiaryViewModel, ConfigViewModel, InitiativeTrackerViewModel, useViewModel } from "./useViewModel";
+import { useViewModel, ViewModel } from "./useViewModel";
 import { store } from "./store";
 
 // @ts-ignore
-export const Context = createContext<InitiativeTrackerViewModel & BestiaryViewModel & ConfigViewModel>();
+export const Context = createContext<ViewModel>();
 
 interface Props {
     children: ReactNode;

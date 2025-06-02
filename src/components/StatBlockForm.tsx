@@ -21,6 +21,7 @@ import { StatBlockDisplay } from './StatBlockDisplay';
 import { generateStatBlock } from '../action/ai/generateStatBlock';
 import { Context } from '../model/Context';
 import { useSearchParams } from 'react-router';
+import { showNotification } from '@mantine/notifications';
 
 const sizeOptions = ['Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan'];
 const damageTypes = [
@@ -123,29 +124,38 @@ export function StatBlockForm({ aiEnabled = true }: Props) {
     const generate = async () => {
         setAiLoading(true);
 
-        const statBlock = await generateStatBlock(
-            form.values.name,
-            form.values.challengeRating,
-            {
-                alignment: form.values.alignment,
-                type: form.values.type,
-            },
-            { apiKey: apiKey || '' }
-        );
+        try {
+            const statBlock = await generateStatBlock(
+                form.values.name,
+                form.values.challengeRating,
+                {
+                    alignment: form.values.alignment,
+                    type: form.values.type,
+                },
+                { apiKey: apiKey || '' }
+            );
 
-        setAiLoading(false);
+            if (statBlock) {
+                form.setValues({
+                    ...form.values,
+                    ...statBlock,
+                    traits: statBlock.traits || [],
+                    actions: statBlock.actions || [],
+                });
+                setTraits(statBlock.traits || []);
+                setActions(statBlock.actions || []);
+            }
 
-        if (statBlock) {
-            form.setValues({
-                ...form.values,
-                ...statBlock,
-                traits: statBlock.traits || [],
-                actions: statBlock.actions || [],
+            setAiLoading(false);
+        } catch (error) {
+            showNotification({
+                title: 'Error',
+                message: 'Failed to generate stat block. Please check your OpenAI API key and try again.',
+                color: 'red',
+                autoClose: 5000,
             });
-            setTraits(statBlock.traits || []);
-            setActions(statBlock.actions || []);
-        } else {
-            console.error('Failed to generate stat block');
+        } finally {
+            setAiLoading(false);
         }
     }
 
@@ -271,13 +281,19 @@ export function StatBlockForm({ aiEnabled = true }: Props) {
                             </>}
                             <Button type="submit" onClick={() => {
                                 addMonster(form.values);
+                                showNotification({
+                                    title: 'Monster Added',
+                                    message: `${form.values.name} has been added to the bestiary.`,
+                                    color: 'green',
+                                    autoClose: 3000
+                                });
                             }} disabled={!form.values.name}>Save Stat Block</Button>
                             {aiEnabled && <Button loading={aiLoading} onClick={generate} disabled={!form.values.name && !form.values.challengeRating}>Generate with AI</Button>}
                             {aiEnabled && <Button onClick={() => setEdit(!edit)}>Edit Stat Block</Button>}
                         </Stack>
                     </Grid.Col>
                     <Grid.Col span={6}>
-                        { <StatBlockDisplay statBlock={form.values} loading={aiLoading} /> }
+                        {<StatBlockDisplay statBlock={form.values} loading={aiLoading} />}
                     </Grid.Col>
                 </Grid>
             </form>

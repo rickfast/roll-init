@@ -10,28 +10,29 @@ import { NumberCell } from "./NumberCell";
 import { ClickInput } from "./ClickInput";
 import { FeatureModal } from "./FeatureModal";
 import { conditions } from "../model/data";
+import { showNotification } from "@mantine/notifications";
 
 export const InitiativeTracker = () => {
-    const { 
-        allCombatants, 
-        selected, 
-        addCombatant, 
-        updateCombatant, 
+    const {
+        allCombatants,
+        selected,
+        addCombatant,
+        updateCombatant,
         deleteCombatant,
-        next, 
-        rollInitiative, 
-        rollAllInitiative, 
-        sort 
+        next,
+        rollInitiative,
+        rollAllInitiative,
+        sort
     } = useContext(Context);
 
     return (
         <>
-            <Affix position={{ bottom: 40, right: 40 }}>
+            <Affix position={{ bottom: 70, right: 40 }}>
                 <ActionIcon radius="xl" size={60} onClick={() => { next() }}>
                     <PiPlayBold />
                 </ActionIcon>
             </Affix>
-            <Affix position={{ bottom: 50, right: 120 }}>
+            <Affix position={{ bottom: 80, right: 120 }}>
                 <Button
                     variant="outline"
                     rightSection={<FaDiceD20 />}
@@ -39,7 +40,7 @@ export const InitiativeTracker = () => {
                     Roll Initiative
                 </Button>
             </Affix>
-            <Affix position={{ bottom: 50, right: 280 }}>
+            <Affix position={{ bottom: 80, right: 280 }}>
                 <Button
                     variant="outline"
                     rightSection={<FaSortAmountDown />}
@@ -89,6 +90,12 @@ export const InitiativeTracker = () => {
                         })}
                     <AddCombatantRow onAddCombatant={(combatant: Combatant, quantity: number) => {
                         addCombatant(combatant, quantity);
+                        showNotification({
+                            title: 'Combatant Added',
+                            message: `${combatant.name} added to initiative tracker.`,
+                            color: 'green',
+                            autoClose: 3000
+                        })
                     }} />
                 </Table.Tbody>
             </Table>
