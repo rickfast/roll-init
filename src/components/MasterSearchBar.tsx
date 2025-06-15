@@ -14,13 +14,12 @@ const typeToIcons: { [type: string]: React.ReactNode } = {
 
 export const MasterSearchBar = () => {
     const { searchable } = useContext(Context);
-    const autocompleteRef = useRef<HTMLInputElement>(null);
     const [value, setValue] = useState('');
     const data = Array.from(searchable.keys()).sort();
+    const inputRef = useRef<HTMLInputElement>(null);
 
     return (
         <Autocomplete
-            // @ts-ignore
             data={data}
             radius="xl"
             size="md"
@@ -28,14 +27,15 @@ export const MasterSearchBar = () => {
             renderOption={(input) => {
                 const item = searchable.get(input.option.value)!;
                 const icon = typeToIcons[item.type] || null;
-                
-                return <NavLink href={item.href} label={item.value} icon={icon} onClick={() => setValue('')}/>                // return (<NavLink to={item.href}>{icon} {input.option.value}</NavLink>)
+
+                return <NavLink icon={icon} href={`${item.href}&search=1`} label={item.value} />
             }}
             rightSectionWidth={42}
             rightSection={<FaSearch />}
-            ref={autocompleteRef}
             onChange={setValue}
-            onOptionSubmit={() => setValue('')}
+            limit={10}
+            ref={inputRef}
+            onClick={() => inputRef.current?.select()}
         />
     )
 }

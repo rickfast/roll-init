@@ -8,8 +8,8 @@ import './layout.css';
 
 import { AppShell, AppShellHeader, createTheme, Loader, MantineProvider } from "@mantine/core";
 import { ContextProvider } from "./model/Context";
-import { InitiativeTracker } from './components/InitiativeTracker';
-import { StatBlockForm } from './components/StatBlockForm';
+import { InitiativeTracker } from './components/tracker/InitiativeTracker';
+import { StatBlockForm } from './components/statblock/StatBlockForm';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import { GiBoltSpellCast, GiSpikedDragonHead } from "react-icons/gi";
 import { IoSettingsOutline } from "react-icons/io5";
@@ -17,14 +17,14 @@ import { TbDatabaseImport } from "react-icons/tb";
 import { LuSwords } from "react-icons/lu";
 import { NavLink } from './components/NavLink';
 import { PiSparkleDuotone } from 'react-icons/pi';
-import { ImportScreen } from './components/ImportScreen';
-import { Bestiary } from './components/Bestiary';
+import { ImportScreen } from './components/import/ImportScreen';
+import { Bestiary } from './components/bestiary/Bestiary';
 import { AdminPanel } from './components/AdminPanel';
 import { FaEdit } from 'react-icons/fa';
 import { Header } from './components/Header';
 import { Notifications } from '@mantine/notifications';
 import { RingLoader } from './components/RingLoader';
-import { Spells } from './components/Spells';
+import { Spells } from './components/spells/Spells';
 
 const theme = createTheme({
   components: {

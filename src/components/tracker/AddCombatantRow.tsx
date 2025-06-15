@@ -1,7 +1,7 @@
-import { Combatant } from "../model/Combatant";
+import { Combatant } from "../../model/Combatant";
 import { ActionIcon, Autocomplete, ButtonGroup, Table, TextInput } from "@mantine/core";
 import { IoMdPersonAdd } from "react-icons/io";
-import { bestiary, bestiaryKv } from "../model/bestiary";
+import { bestiary, bestiaryKv } from "../../model/bestiary";
 import { useForm } from "@mantine/form";
 
 interface Props {

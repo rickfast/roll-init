@@ -1,4 +1,4 @@
-import { StatBlock } from '../model/StatBlock';
+import { StatBlock } from '../../model/StatBlock';
 import {
     TextInput,
     NumberInput,
@@ -18,8 +18,8 @@ import {
 import { useForm } from '@mantine/form';
 import { useContext, useState } from 'react';
 import { StatBlockDisplay2 } from './StatBlockDisplay2';
-import { generateStatBlock } from '../action/ai/generateStatBlock';
-import { Context } from '../model/Context';
+import { generateStatBlock } from '../../action/ai/generateStatBlock';
+import { Context } from '../../model/Context';
 import { useSearchParams } from 'react-router';
 import { showNotification } from '@mantine/notifications';
 

@@ -14,7 +14,7 @@ import {
 } from '@mantine/core';
 import { GiShield as IconShield, GiHeartArmor as IconHeart, GiLightningArc as IconBolt } from 'react-icons/gi';
 // import { IconShield, IconHeart, IconBolt } from '@tabler/icons-react';
-import { StatBlock } from '../model/StatBlock';
+import { StatBlock } from '../../model/StatBlock';
 
 interface StatBlockDisplayProps {
     statBlock: StatBlock;

@@ -3,8 +3,8 @@
 import { Box, Grid } from "@mantine/core"
 import { CodeHighlight, CodeHighlightAdapterProvider, createShikiAdapter } from '@mantine/code-highlight';
 import React, { useContext } from "react";
-import { importBestiary, importSpells } from "../action/import/import";
-import { Context } from "../model/Context";
+import { importBestiary, importSpells } from "../../action/import/import";
+import { Context } from "../../model/Context";
 import { showNotification } from '@mantine/notifications';
 import { ImportForm } from "./ImportForm";
 

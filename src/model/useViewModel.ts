@@ -88,7 +88,9 @@ export function useViewModel(initialData: SaveData): ViewModel {
       tracker: {
         combatants: Array.from(combatants.entries()),
         selected
-      }
+      },
+      apiKey,
+      spells
     })
       .then(() => {
         setTimeout(() => setSaving(false), 2000);

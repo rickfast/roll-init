@@ -10,7 +10,7 @@ import {
     Flex,
     Paper
 } from '@mantine/core';
-import { Spell } from '../model/Spell';
+import { Spell } from '../../model/Spell';
 
 interface SpellDisplayProps {
     spell: Spell;

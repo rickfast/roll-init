@@ -1,15 +1,15 @@
-import { Combatant } from "../model/Combatant";
+import { Combatant } from "../../model/Combatant";
 import { ActionIcon, Affix, Button, MultiSelect, Table } from "@mantine/core";
 import { AddCombatantRow } from "./AddCombatantRow";
 import { useContext } from "react";
-import { Context } from "../model/Context";
+import { Context } from "../../model/Context";
 import { PiPlayBold } from "react-icons/pi";
 import { FaDiceD20, FaSortAmountDown } from 'react-icons/fa';
 import { RiSkullLine } from "react-icons/ri";
 import { NumberCell } from "./NumberCell";
 import { ClickInput } from "./ClickInput";
 import { FeatureModal } from "./FeatureModal";
-import { conditions } from "../model/data";
+import { conditions } from "../../model/data";
 import { showNotification } from "@mantine/notifications";
 
 export const InitiativeTracker = () => {

@@ -1,5 +1,5 @@
 import { ActionIcon, Modal, Tabs } from "@mantine/core";
-import { StatBlock } from "../model/StatBlock"
+import { StatBlock } from "../../model/StatBlock"
 import { FeatureDisplay } from "./FeatureDisplay";
 import { useDisclosure } from "@mantine/hooks";
 import { LuSwords } from "react-icons/lu";
