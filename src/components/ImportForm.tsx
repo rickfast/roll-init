@@ -1,43 +1,16 @@
 'use client';
 
-import { Box, Button, FileInput, Grid, Stack } from "@mantine/core"
-import { CodeHighlight, CodeHighlightAdapterProvider, createShikiAdapter } from '@mantine/code-highlight';
-import React, { useContext, useState } from "react";
-import { importBestiary } from "../action/import/import";
-import { Context } from "../model/Context";
 import { showNotification } from '@mantine/notifications';
+import { Button, Fieldset, FileInput, Stack } from '@mantine/core';
 
-async function loadShiki() {
-    const { createHighlighter } = await import('shiki');
-    const shiki = await createHighlighter({
-        langs: ['tsx', 'scss', 'html', 'bash', 'json'],
-        themes: [],
-    });
-
-    return shiki;
+interface Props {
+    importer: (json: string) => string;
+    onJsonRead: (json: string) => void;
+    onSave: (label: string) => void;
+    label: string;
 }
 
-const shikiAdapter = createShikiAdapter(loadShiki);
-
-export const ImportForm = () => {
-    const [json, setJson] = React.useState<any>(null);
-    const [loading, setLoading] = useState(false);
-    const { importMonsters } = useContext(Context);
-    
-    const onSave = () => {
-        setLoading(true);
-
-        if (!json) {
-            console.error('No JSON to save');
-            setLoading(false);
-            return;
-        }
-
-        importMonsters(JSON.parse(json));
-        setLoading(false);
-        showNotification({ message: 'Bestiary successfully imported.' });
-    }
-
+export const ImportForm = ({ importer, onJsonRead, onSave, label }: Props) => {
     const onFileChange = (file: File) => {
         if (!file) {
             console.error('No file selected');
@@ -48,32 +21,28 @@ export const ImportForm = () => {
             .then((text) => {
                 try {
                     const parsedJson = JSON.parse(text);
-                    const bestiaryJson = JSON.stringify(parsedJson, null, 2);
-                    const monsters = importBestiary(bestiaryJson);
+                    const json = JSON.stringify(parsedJson, null, 2);
+                    const jsonAsString = importer(json);
 
-                    setJson(monsters);
+                    onJsonRead(jsonAsString);
                 } catch (error) {
-                    console.error('Error parsing JSON:', error);
-                    setJson('Invalid JSON format');
+                    showNotification({
+                        title: 'Error',
+                        message: `Failed to parse JSON file. Please ensure it is a valid 5e Tools file. ${error}`,
+                        color: 'red',
+                    });
                 }
             });
     }
 
     return (
-        <Box mx="auto">
-            <CodeHighlightAdapterProvider adapter={shikiAdapter}>
-                <Grid>
-                    <Grid.Col span={6}>
-                        <Stack gap="md">
-                            <FileInput placeholder={"5e Tools Bestiary File"} onChange={(payload) => onFileChange(payload!)} />
-                            <Button disabled={!json} loading={loading} onClick={onSave}>Save</Button>
-                        </Stack>
-                    </Grid.Col>
-                    <Grid.Col span={6}>
-                        {json && <CodeHighlight language="json" style={{ height: '100%' }} code={json} />}
-                    </Grid.Col>
-                </Grid>
-            </CodeHighlightAdapterProvider>
-        </Box >
+        <form>
+            <Fieldset name={`${label.toLowerCase()}-form`} legend={label}>
+                <Stack gap="md">
+                    <FileInput key={`${label}-input`} placeholder={`5e Tools ${label} File`} onChange={(payload) => onFileChange(payload!)} />
+                    <Button key={`${label}-save`} onClick={() => onSave(label)}>Save</Button>
+                </Stack>
+            </Fieldset>
+        </form>
     );
-};
+}

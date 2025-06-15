@@ -8,7 +8,8 @@ import {
     Divider,
     Stack,
     Box,
-    Skeleton
+    Skeleton,
+    Card
 } from '@mantine/core';
 import { StatBlock } from '../model/StatBlock';
 
@@ -82,64 +83,66 @@ export const StatBlockDisplay: React.FC<Props> = ({ statBlock, loading }) => {
     }
 
     return (
-        <Stack gap="xs">
-            <Title order={2}>{name}</Title>
-            <Text>{`${size} ${type}, ${alignment}`}</Text>
-            <Divider />
-            <Group gap="md">
-                <Text><strong>AC:</strong> {armorClass}</Text>
-                <Text><strong>HP:</strong> {hitPoints.value} ({hitPoints.hitDice})</Text>
-                <Text><strong>Speed:</strong> {speed.map(s => `${s.type} ${s.speed}`).join(', ')}</Text>
-            </Group>
+        <Card withBorder shadow="sm" radius="md">
+            <Stack gap="xs">
+                <Title order={2}>{name}</Title>
+                <Text>{`${size} ${type}, ${alignment}`}</Text>
+                <Divider />
+                <Group gap="md">
+                    <Text><strong>AC:</strong> {armorClass}</Text>
+                    <Text><strong>HP:</strong> {hitPoints.value} ({hitPoints.hitDice})</Text>
+                    <Text><strong>Speed:</strong> {speed.map(s => `${s.type} ${s.speed}`).join(', ')}</Text>
+                </Group>
 
-            <Divider label="Ability Scores" labelPosition="center" />
-            {renderAbilities()}
+                <Divider label="Ability Scores" labelPosition="center" />
+                {renderAbilities()}
 
-            <Group gap="md" grow>
-                <Text><strong>Saving Throws:</strong>&nbsp;
-                    {Object.entries(savingThrows).filter(([_, value]) => value)
-                        .map(([key, value]) => (
-                            value && `${key.toUpperCase()} ${value > 0 ? `+${value}` : `${value}`}`
-                        )).join(', ')}
-                </Text>
-            </Group>
+                <Group gap="md" grow>
+                    <Text><strong>Saving Throws:</strong>&nbsp;
+                        {Object.entries(savingThrows).filter(([_, value]) => value)
+                            .map(([key, value]) => (
+                                value && `${key.toUpperCase()} ${value > 0 ? `+${value}` : `${value}`}`
+                            )).join(', ')}
+                    </Text>
+                </Group>
 
-            <Divider label="Defenses" labelPosition="center" />
-            <Group gap="xs" grow>
-                {damageVulnerabilities.length > 0 && (
-                    <Badge color="red" variant="outline">Vulnerable: {damageVulnerabilities.join(', ')}</Badge>
-                )}
-                {damageResistances.length > 0 && (
-                    <Badge color="yellow" variant="outline">Resistant: {damageResistances.join(', ')}</Badge>
-                )}
-                {damageImmunities.length > 0 && (
-                    <Badge color="blue" variant="outline">Immune: {damageImmunities.join(', ')}</Badge>
-                )}
-                {conditionImmunities.length > 0 && (
-                    <Badge color="gray" variant="outline">Condition Immunities: {conditionImmunities.join(', ')}</Badge>
-                )}
-            </Group>
+                <Divider label="Defenses" labelPosition="center" />
+                <Group gap="xs" grow>
+                    {damageVulnerabilities.length > 0 && (
+                        <Badge color="red" variant="outline">Vulnerable: {damageVulnerabilities.join(', ')}</Badge>
+                    )}
+                    {damageResistances.length > 0 && (
+                        <Badge color="yellow" variant="outline">Resistant: {damageResistances.join(', ')}</Badge>
+                    )}
+                    {damageImmunities.length > 0 && (
+                        <Badge color="blue" variant="outline">Immune: {damageImmunities.join(', ')}</Badge>
+                    )}
+                    {conditionImmunities.length > 0 && (
+                        <Badge color="gray" variant="outline">Condition Immunities: {conditionImmunities.join(', ')}</Badge>
+                    )}
+                </Group>
 
-            <Divider labelPosition="center" />
-            <Group gap="md">
-                {senses && <Text><strong>Senses:</strong> {senses}</Text>}
-                <Text><strong>Languages:</strong> {languages.join(', ')}</Text>
-                <Text><strong>CR:</strong> {challengeRating}</Text>
-            </Group>
+                <Divider labelPosition="center" />
+                <Group gap="md">
+                    {senses && <Text><strong>Senses:</strong> {senses}</Text>}
+                    <Text><strong>Languages:</strong> {languages.join(', ')}</Text>
+                    <Text><strong>CR:</strong> {challengeRating}</Text>
+                </Group>
 
-            <Divider />
-            {traits.map((trait, idx) => (
-                <Box key={idx}>
-                    <Text><b>{trait.name}</b> {trait.desc}</Text>
-                </Box>
-            ))}
+                <Divider />
+                {traits.map((trait, idx) => (
+                    <Box key={idx}>
+                        <Text><b>{trait.name}</b> {trait.desc}</Text>
+                    </Box>
+                ))}
 
-            <Divider label="Actions" labelPosition="center" />
-            {actions.map((action, idx) => (
-                <Box key={idx}>
-                    <Text><b>{action.name}</b> {action.desc}</Text>
-                </Box>
-            ))}
-        </Stack>
+                <Divider label="Actions" labelPosition="center" />
+                {actions.map((action, idx) => (
+                    <Box key={idx}>
+                        <Text><b>{action.name}</b> {action.desc}</Text>
+                    </Box>
+                ))}
+            </Stack>
+        </Card>
     );
 };

@@ -7,10 +7,16 @@ import { FaEdit } from "react-icons/fa";
 import { TrackActionIcon } from "./TrackActionIcon";
 import { fromStatBlock } from "../model/Combatant";
 import { showNotification } from "@mantine/notifications";
+import { useLocation, useSearchParams } from "react-router";
+import { StatBlockDisplay2 } from "./StatBlockDisplay2";
 
 export const Bestiary = () => {
     const { bestiary, addCombatant } = useContext(Context);
+    const [searchParams] = useSearchParams();
+    
     const [selectedStatBlockId, selectStatBlock] = useState<string | null>(null);
+
+    const selected = selectedStatBlockId || searchParams.get('id'); 
 
     return (
         <Box mx="auto">
@@ -48,9 +54,9 @@ export const Bestiary = () => {
                     </Table>
                 </Grid.Col>
                 <Grid.Col span={6}>
-                    {selectedStatBlockId && (
-                        <StatBlockDisplay
-                            statBlock={bestiary[selectedStatBlockId]} />
+                    {selected && (
+                        <StatBlockDisplay2
+                            statBlock={bestiary[selected]} />
                     )}
                 </Grid.Col>
             </Grid>

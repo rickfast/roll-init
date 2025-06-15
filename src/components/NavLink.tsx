@@ -5,10 +5,12 @@ interface Props {
     label: string;
     href: string;
     icon: React.ReactNode;
+    onClick: () => void;
 }
 
-export const NavLink = ({ href, label, icon }: Props) =>
+export const NavLink = ({ href, label, icon, onClick = () => {} }: Props) =>
     <MantineNavLink
+        onClick={onClick}
         href={href}
         renderRoot={(props) => <RouterLink to={href} {...props} />}
         label={label}

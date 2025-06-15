@@ -11,19 +11,20 @@ import { ContextProvider } from "./model/Context";
 import { InitiativeTracker } from './components/InitiativeTracker';
 import { StatBlockForm } from './components/StatBlockForm';
 import { BrowserRouter, Route, Routes } from 'react-router';
-import { GiSpikedDragonHead } from "react-icons/gi";
+import { GiBoltSpellCast, GiSpikedDragonHead } from "react-icons/gi";
 import { IoSettingsOutline } from "react-icons/io5";
 import { TbDatabaseImport } from "react-icons/tb";
 import { LuSwords } from "react-icons/lu";
 import { NavLink } from './components/NavLink';
 import { PiSparkleDuotone } from 'react-icons/pi';
-import { ImportForm } from './components/ImportForm';
+import { ImportScreen } from './components/ImportScreen';
 import { Bestiary } from './components/Bestiary';
 import { AdminPanel } from './components/AdminPanel';
 import { FaEdit } from 'react-icons/fa';
 import { Header } from './components/Header';
 import { Notifications } from '@mantine/notifications';
 import { RingLoader } from './components/RingLoader';
+import { Spells } from './components/Spells';
 
 const theme = createTheme({
   components: {
@@ -61,6 +62,7 @@ export default function App() {
               <NavLink label="Stat Block Editor" href="/statblock" key="Edit Stat Block" icon={<FaEdit />} />
               <NavLink label="Stat Block Generator" href="/generate" key="Generate Stat Block" icon={<PiSparkleDuotone />} />
               <NavLink label="Bestiary" href="/bestiary" key="Bestiary" icon={<GiSpikedDragonHead />} />
+              <NavLink label="Spells" href="/spells" key="Spells" icon={<GiBoltSpellCast />} />
               <NavLink label="Import Bestiary" href="/import" key="Import Bestiary" icon={<TbDatabaseImport />} />
               <NavLink label="Settings" href="/admin" key="Settings" icon={<IoSettingsOutline />} />
             </AppShell.Navbar>
@@ -70,9 +72,10 @@ export default function App() {
                 <Route path="/generate" element={<StatBlockForm />} />
                 <Route path="/bestiary" element={<Bestiary />} />
                 <Route path="/track" element={<InitiativeTracker />} />
-                <Route path="/import" element={<ImportForm />} />
+                <Route path="/import" element={<ImportScreen />} />
                 <Route path="/admin" element={<AdminPanel />} />
                 <Route path="/statblock" element={<StatBlockForm aiEnabled={false} />} />
+                <Route path="/spells" element={<Spells />} />
               </Routes>
             </AppShell.Main>
           </AppShell>

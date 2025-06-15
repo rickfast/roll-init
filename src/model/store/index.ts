@@ -4,6 +4,7 @@ import { Combatant } from '../Combatant';
 
 export interface SaveData {
     bestiary: { [monsterId: string]: StatBlock };
+    spells?: { [spellId: string]: any };
     tracker?: {
         combatants: [string, Combatant][];
         selected: number;
