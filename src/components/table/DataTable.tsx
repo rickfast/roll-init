@@ -1,21 +1,21 @@
 import { useEffect, useState } from "react";
-import { ScrollArea, Table } from "@mantine/core";
+import { Grid, ScrollArea, Table } from "@mantine/core";
 import { useNavigate, useSearchParams } from "react-router";
 import { Filter, filterCatalog, FilterType } from "../../model/Filter";
 import { useScrollIntoView } from "@mantine/hooks";
 import { FilterPopover } from "./FilterPopover";
 
-interface Field {
+export interface Field {
     name: string;
     field: string;
     filter?: FilterType;
 }
 
-interface Props<T> {
+export interface Props<T> {
     fields: Field[];
     data: { [id: string]: T };
     path: string;
-    actions?: React.ReactNode;
+    actions?: (id: string, item: T) => React.ReactNode;
 }
 
 export function DataTable<T>({ fields, data, path, actions }: Props<T>) {
@@ -23,7 +23,9 @@ export function DataTable<T>({ fields, data, path, actions }: Props<T>) {
     const selected = searchParams.get('id');
     const navigate = useNavigate();
     const [filters, setFilters] = useState<Map<string, Filter>>(new Map<string, Filter>());
-    const { scrollableRef, targetRef, scrollIntoView } = useScrollIntoView();
+    const { scrollableRef, targetRef, scrollIntoView } = useScrollIntoView({
+        offset: 40
+    });
 
     let liveData = Array.from(Object.entries(data));
 
@@ -52,6 +54,14 @@ export function DataTable<T>({ fields, data, path, actions }: Props<T>) {
         setFilters(map);
     };
 
+    const clearFilter = (field: string) => {
+        const map = new Map<string, Filter>();
+
+        map.delete(field);
+
+        setFilters(map);
+    }
+
     return (
         <ScrollArea h={window.innerHeight - 100} viewportRef={scrollableRef}>
             <Table striped highlightOnHover withColumnBorders stickyHeader>
@@ -60,10 +70,19 @@ export function DataTable<T>({ fields, data, path, actions }: Props<T>) {
                         {
                             fields.map(field => {
                                 return <Table.Th>
-                                    {field.name}
-                                    {field.filter && <FilterPopover onFilter={(value => setFilter(field.field, field.filter!, value))} />}
+                                    <Grid>
+                                        <Grid.Col span={10}>
+                                            {field.name}                                            
+                                        </Grid.Col>
+                                        <Grid.Col span={2}>
+                                            {field.filter && <FilterPopover onClear={() => clearFilter(field.field)} onFilter={(value => setFilter(field.field, field.filter!, value))} />}
+                                        </Grid.Col>
+                                    </Grid>
                                 </Table.Th>
                             })
+                        }
+                        {
+                            actions && <Table.Th>Actions</Table.Th>
                         }
                     </Table.Tr>
                 </Table.Thead>
@@ -79,9 +98,9 @@ export function DataTable<T>({ fields, data, path, actions }: Props<T>) {
                                 // @ts-ignore
                                 fields.map(field => <Table.Td>{item[field.field]}</Table.Td>)
                             }
-                            {actions && <Table.Td>
-                                {actions}
-                            </Table.Td>}
+                            {
+                                actions && <Table.Td>{actions(id, item)}</Table.Td>
+                            }
                         </Table.Tr>
                     ))}
                 </Table.Tbody>

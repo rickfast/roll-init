@@ -72,7 +72,7 @@ export function useViewModel(initialData: SaveData): ViewModel {
   useEffect(() => {
     save();
     setSearchable(createSearchData(bestiary, spells))
-  }, [bestiary, apiKey, combatants]);
+  }, [bestiary, apiKey, combatants, spells]);
 
   const pushNotification = (notification: string) => {
     if (!notifications.has(notification)) {
