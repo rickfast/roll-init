@@ -1,6 +1,8 @@
 import { DamageType, Language, StatBlock } from "../../model/StatBlock";
 import { Alignment, ConditionI, ConditionImmuneClass, CRClass, FluffyType, Immune, Initiative, Monster, PurpleType, ResistClass, Size, Speed, TypeElement, VulnerableClass } from "../../model/5etools/Bestiary.ts";
+import { Spell as Spell5e } from '../../model/5etools/Spells.ts';
 import { Size as StatBlockSize, Speed as StatBlockSpeed } from "../../model/StatBlock";
+import { Entry, Spell } from "../../model/Spell.ts";
 
 function mapSize(size: Size[]): StatBlockSize {
     if (!size || size.length === 0) {
@@ -209,4 +211,137 @@ export function transform(monster: Monster): StatBlock {
     // Add other properties similarly...
 
     return statBlock;
+}
+
+export function transformSpell(spell: Spell5e): Spell {
+    // Map level
+    const levelMap = [
+        'Cantrip', '1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th'
+    ] as const;
+    const level = levelMap[spell.level] as Spell['level'];
+
+    // Map school
+    const schoolMap: Record<string, Spell['school']> = {
+        A: 'Abjuration',
+        C: 'Conjuration',
+        D: 'Divination',
+        E: 'Enchantment',
+        V: 'Evocation',
+        I: 'Illusion',
+        N: 'Necromancy',
+        T: 'Transmutation'
+    };
+    const school = schoolMap[spell.school] || 'Abjuration';
+
+    // Map casting time
+    const time = spell.time?.[0];
+    let castingTime: Spell['castingTime'] = {
+        type: 'action',
+        duration: 1
+    };
+    if (time) {
+        let type: Spell['castingTime']['type'] = 'action';
+        switch (time.unit) {
+            case 'action': type = 'action'; break;
+            case 'bonus': type = 'bonus action'; break;
+            case 'reaction': type = 'reaction'; break;
+            case 'minute': type = 'minute'; break;
+            case 'hour': type = 'hour'; break;
+        }
+        castingTime = {
+            type,
+            duration: time.number
+        };
+    }
+
+    // Map range
+    let rangeType: Spell['range']['type'] = 'Self';
+    let distance: number | undefined = undefined;
+    if (spell.range?.distance) {
+        switch (spell.range.distance.type) {
+            case 'self': rangeType = 'Self'; break;
+            case 'touch': rangeType = 'Touch'; break;
+            case 'feet': rangeType = 'Feet'; distance = spell.range.distance.amount; break;
+            case 'miles': rangeType = 'Miles'; distance = spell.range.distance.amount; break;
+            case 'sight': rangeType = 'Sight'; break;
+            case 'unlimited': rangeType = 'Unlimited'; break;
+        }
+    }
+    const range: Spell['range'] = { type: rangeType };
+    if (distance !== undefined) range.distance = distance;
+
+    // Map components
+    const components = {
+        verbal: !!spell.components.v,
+        somatic: !!spell.components.s,
+        material: !!spell.components.m,
+        materialComponents: typeof spell.components.m === 'object'
+            ? spell.components.m.text
+            : (typeof spell.components.m === 'string' ? spell.components.m : undefined)
+    };
+
+    // Map duration
+    let duration = '';
+    let concentration = false;
+    if (spell.duration && spell.duration.length > 0) {
+        const d = spell.duration[0];
+        concentration = !!d.concentration;
+        switch (d.type) {
+            case 'instant': duration = 'Instantaneous'; break;
+            case 'timed':
+                if (d.duration) {
+                    duration = `${d.duration.amount} ${d.duration.type}${d.duration.amount > 1 ? 's' : ''}`;
+                    if (d.duration.upTo) duration = `Up to ${duration}`;
+                }
+                break;
+            case 'permanent': duration = 'Permanent'; break;
+            case 'special': duration = 'Special'; break;
+        }
+    }
+
+    // Ritual
+    const ritual = !!spell.meta?.ritual;
+
+    // Description
+    function flattenEntries(entries: Array<any>): Entry[] {
+        const result: Entry[] = [];
+        for (const entry of entries) {
+            if (typeof entry === 'string') {
+                result.push({ text: entry });
+            } else if (entry.entries) {
+                if (entry.name) {
+                    result.push({ title: entry.name, text: entry.entries.join(' ') });
+                } else {
+                    result.push(...flattenEntries(entry.entries));
+                }
+            }
+        }
+        return result;
+    }
+    const description = flattenEntries(spell.entries);
+
+    // Higher level
+    let higherLevel: string | undefined = undefined;
+    if (spell.entriesHigherLevel && spell.entriesHigherLevel.length > 0) {
+        higherLevel = spell.entriesHigherLevel.map(e => e.entries.join(' ')).join('\n');
+    }
+
+    // Classes (best effort, as 5etools spells may not have a direct class list)
+    // You may want to improve this if you have class info elsewhere
+    const classes: Spell['classes'] = [];
+
+    return {
+        name: spell.name,
+        level,
+        school,
+        castingTime,
+        range,
+        components,
+        duration,
+        concentration,
+        ritual,
+        description,
+        higherLevel,
+        classes
+    };
 }

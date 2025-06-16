@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Combatant } from "./Combatant";
 import { SaveData, store } from './store'
 import { StatBlock } from "./StatBlock";
+import { Spell } from "./Spell";
 
 function roll20(): number {
   return Math.floor(Math.random() * 20) + 1;
@@ -29,27 +30,49 @@ export interface ViewModel {
   addMonster: (monster: StatBlock) => void;
   removeMonster: (monsterId: string) => void;
   updateMonster: (monsterId: string, updatedData: Partial<StatBlock>) => void;
+  spells: { [name: string]: Spell }
   importMonsters: (monsters: { [monsterId: string]: StatBlock }) => void;
+  importSpells: (monsters: { [spellId: string]: Spell }) => void;
   save: () => void
   apiKey?: string;
   setApiKey: (apiKey: string) => void;
   saving: boolean;
   notifications: Set<string>;
   pushNotification: (notification: string) => void;
+  searchable: Map<string, SearchData>;
+}
+
+export type Type = 'monster' | 'spell';
+
+export interface SearchData {
+  type: Type,
+  value: string,
+  href: string 
 }
 
 export function useViewModel(initialData: SaveData): ViewModel {
   const tracker = initialData.tracker || { combatants: [], selected: 0 };
   const [bestiary, setBestiary] = useState<{ [monsterId: string]: StatBlock }>({ ...initialData.bestiary });
+  const [spells, setSpells] = useState<{ [name: string]: Spell }>({ ...initialData.spells });
   const [combatants, setCombatantz] = useState<Map<string, Combatant>>(new Map(tracker.combatants));
   const [selected, setSelected] = useState(tracker.selected);
   const [apiKey, setApiKey] = useState<string | undefined>(initialData.apiKey);
   const [notifications, setNotifications] = useState(new Set<string>());
   const [saving, setSaving] = useState(false);
 
+  const [searchable, setSearchable] = useState<Map<string, SearchData>>(createSearchData(initialData.bestiary, {}));
+
+  function createSearchData(bestiary: {[monsterId: string]: StatBlock}, spells: {[spellId: string]: Spell} ) {
+    const monsters: [string, SearchData][] = Object.values(bestiary).map(monster => { return [monster.name, {type: 'monster', value: monster.name, href: `/bestiary?id=${monster.name}`}]});
+    const searchableSpells: [string, SearchData][] = Object.values(spells).map(spell => { return [spell.name, {type: 'spell', value: spell.name, href: `/spells?id=${spell.name}`}]});
+    
+    return new Map([...monsters, ...searchableSpells]);
+  }
+
   useEffect(() => {
     save();
-  }, [bestiary, apiKey, combatants, selected]);
+    setSearchable(createSearchData(bestiary, spells))
+  }, [bestiary, apiKey, combatants, spells]);
 
   const pushNotification = (notification: string) => {
     if (!notifications.has(notification)) {
@@ -65,7 +88,9 @@ export function useViewModel(initialData: SaveData): ViewModel {
       tracker: {
         combatants: Array.from(combatants.entries()),
         selected
-      }
+      },
+      apiKey,
+      spells
     })
       .then(() => {
         setTimeout(() => setSaving(false), 2000);
@@ -122,6 +147,15 @@ export function useViewModel(initialData: SaveData): ViewModel {
     }, {} as { [monsterId: string]: StatBlock });
 
     setBestiary(prev => ({ ...prev, ...newMonsters }));
+  }
+
+  const importSpells = (spells: { [spellId: string]: Spell }) => {
+    const newSpells = Object.entries(spells).reduce((acc, [name, spell]) => {
+      acc[spell.name] = { ...spell, name };
+      return acc;
+    }, {} as { [spellId: string]: Spell });
+
+    setSpells(prev => ({ ...prev, ...newSpells }));
   }
 
   const sort = () => {
@@ -251,13 +285,16 @@ export function useViewModel(initialData: SaveData): ViewModel {
     addMonster,
     removeMonster,
     updateMonster,
+    spells,
     importMonsters,
+    importSpells,
     bestiary,
     save,
     apiKey,
     setApiKey,
     saving,
     notifications,
-    pushNotification
+    pushNotification,
+    searchable
   }
 }

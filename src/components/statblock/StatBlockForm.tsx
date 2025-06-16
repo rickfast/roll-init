@@ -1,4 +1,4 @@
-import { StatBlock } from '../model/StatBlock';
+import { StatBlock } from '../../model/StatBlock';
 import {
     TextInput,
     NumberInput,
@@ -17,9 +17,9 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useContext, useState } from 'react';
-import { StatBlockDisplay } from './StatBlockDisplay';
-import { generateStatBlock } from '../action/ai/generateStatBlock';
-import { Context } from '../model/Context';
+import { StatBlockDisplay2 } from './StatBlockDisplay2';
+import { generateStatBlock } from '../../action/ai/generateStatBlock';
+import { Context } from '../../model/Context';
 import { useSearchParams } from 'react-router';
 import { showNotification } from '@mantine/notifications';
 
@@ -42,6 +42,8 @@ interface Props {
 export function StatBlockForm({ aiEnabled = true }: Props) {
     const [searchParams] = useSearchParams();
     const { addMonster, apiKey, bestiary } = useContext(Context);
+    console.log(`API Key: ${apiKey}`);
+
     let editable = false;
 
     let initialValues = {
@@ -95,7 +97,25 @@ export function StatBlockForm({ aiEnabled = true }: Props) {
     }
 
     const form = useForm<StatBlock>({
-        initialValues
+        initialValues,
+        validate: {
+            name: (value) => (value.length < 1 ? 'Name is required' : null),
+            challengeRating: (value) => (value < 0 || value > 30 ? 'Challenge Rating must be between 0 and 30' : null),
+            type: (value) => (value.length < 1 ? 'Type is required' : null),
+
+            alignment: (value) => (value.length < 1 ? 'Alignment is required' : null),
+            armorClass: (value) => (value < 1 ? 'Armor Class must be at least 1' : null),
+            hitPoints: {
+                value: (value) => (value < 1 ? 'Hit Points must be at least 1' : null),
+                hitDice: (value) => (value.length < 1 ? 'Hit Dice is required' : null),
+            },
+            speed: (value) => {
+                if (!value || value.length === 0) {
+                    return 'At least one speed type is required';
+                }
+                return null;
+            }
+        }
     });
 
     const [traits, setTraits] = useState<{ name: string; desc: string }[]>(initialValues.traits || []);
@@ -189,17 +209,66 @@ export function StatBlockForm({ aiEnabled = true }: Props) {
                                     <TextInput
                                         label="Hit Points"
                                         placeholder="e.g., 60"
-                                        {...form.getInputProps('hitPoints.value')} />
+                                        {...form.getInputProps('hitPoints.value')} 
+                                        required />
                                     <TextInput
                                         label="Hit Dice"
                                         placeholder="e.g., 6d10+2"
-                                        {...form.getInputProps('hitPoints.hitDice')} />
+                                        {...form.getInputProps('hitPoints.hitDice')} 
+                                        required />
                                     <NumberInput
                                         label="Armor Class"
                                         {...form.getInputProps('armorClass')}
                                         min={1}
+                                        required
                                     />
                                 </Group>
+
+                                <Fieldset legend="Speed" mb="md">
+                                    <Stack gap="md">
+                                        {form.values.speed?.map((speedEntry, i) => (
+                                            <Group key={i} grow>
+                                                <TextInput
+                                                    label="Type"
+                                                    placeholder="e.g., walk, fly, swim"
+                                                    value={speedEntry.type}
+                                                    onChange={(e) => {
+                                                        const updatedSpeed = [...form.values.speed];
+                                                        updatedSpeed[i] = { ...updatedSpeed[i], type: e.currentTarget.value };
+                                                        form.setFieldValue('speed', updatedSpeed);
+                                                    }}
+                                                />
+                                                <TextInput
+                                                    label="Speed"
+                                                    placeholder="e.g., 30 ft."
+                                                    value={speedEntry.speed}
+                                                    onChange={(e) => {
+                                                        const updatedSpeed = [...form.values.speed];
+                                                        updatedSpeed[i] = { ...updatedSpeed[i], speed: e.currentTarget.value };
+                                                        form.setFieldValue('speed', updatedSpeed);
+                                                    }}
+                                                />
+                                                <span style={{ width: '100%' }}>
+                                                <CloseButton
+                                                    onClick={() => {
+                                                        const updatedSpeed = form.values.speed.filter((_, index) => index !== i);
+                                                        form.setFieldValue('speed', updatedSpeed);
+                                                    }}
+                                                    disabled={form.values.speed.length === 1}
+                                                />
+                                                </span>
+                                            </Group>
+                                        ))}
+                                        <Button
+                                            onClick={() => {
+                                                const currentSpeed = form.values.speed || [];
+                                                form.setFieldValue('speed', [...currentSpeed, { type: '', speed: '' }]);
+                                            }}
+                                        >
+                                            Add Speed Type
+                                        </Button>
+                                    </Stack>
+                                </Fieldset>
 
                                 {/* <Divider label="Ability Scores" /> */}
                                 <Fieldset legend="Ability Scores" mb="md">
@@ -287,13 +356,13 @@ export function StatBlockForm({ aiEnabled = true }: Props) {
                                     color: 'green',
                                     autoClose: 3000
                                 });
-                            }} disabled={!form.values.name}>Save Stat Block</Button>
+                            }} disabled={!form.isValid()}>Save Stat Block</Button>
                             {aiEnabled && <Button loading={aiLoading} onClick={generate} disabled={!form.values.name && !form.values.challengeRating}>Generate with AI</Button>}
                             {aiEnabled && <Button onClick={() => setEdit(!edit)}>Edit Stat Block</Button>}
                         </Stack>
                     </Grid.Col>
                     <Grid.Col span={6}>
-                        {<StatBlockDisplay statBlock={form.values} loading={aiLoading} />}
+                        {<StatBlockDisplay2 statBlock={form.values} loading={aiLoading} />}
                     </Grid.Col>
                 </Grid>
             </form>

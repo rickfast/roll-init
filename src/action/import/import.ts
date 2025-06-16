@@ -1,66 +1,73 @@
 import { Bestiary, Monster } from "../../model/5etools/Bestiary.ts";
-import { transform } from "./transform.ts";
+import { transform, transformSpell } from "./transform.ts";
 import { StatBlock } from "../../model/StatBlock.ts";
+import { Spells } from "../../model/5etools/Spells.ts";
 
-export function importBestiary(json: string) {
-    function modifier(mod: string): string {
-        const num = parseInt(mod, 10);
+function modifier(mod: string): string {
+    const num = parseInt(mod, 10);
 
-        return num > 0 ? `+${num}` : num.toString();
+    return num > 0 ? `+${num}` : num.toString();
+}
+
+function evaluate(token: string, value: string) {
+    switch (token) {
+        case "atkr":
+            switch (value) {
+                case "m":
+                    return 'Melee Weapon Attack';
+                case "r":
+                    return 'Ranged Weapon Attack';
+                default:
+                    return 'Melee or Ranged Weapon Attack';
+            }
+        case "hit":
+            return `Roll: ${modifier(value)}`;
+        case "h":
+            return 'Hit: ';
+        case "spell":
+        case "status":
+        case "condition":
+        case "creature":
+        case "item":
+        case "quickref":
+        case "adventure":
+        case "sense":
+        case "deity":
+        case "table":
+        case "variantrule":
+            return value.split("|")[0];
+        default:
+            return value.split(" ")[0];
     }
+}
 
-    const tokens = new Set<string>();
-    const examples = new Map<string, string>();
+function sanitizeContent(content: string): string {
+    return content = content.replace(/\{@(\w+)(?:\s+([^}]+))?\}/g, (_, token, value) => {
+        const evaluated = evaluate(token, value ?? "");
+        return evaluated;
+    });
+}
 
-    function evaluate(token: string, value: string) {
-        tokens.add(token);
-        examples.set(token, value);
+const inScopeBooks = new Set<string>(["XMM"]);
 
-        switch (token) {
-            case "atkr":
-                switch (value) {
-                    case "m":
-                        return 'Melee Weapon Attack';
-                    case "r":
-                        return 'Ranged Weapon Attack';
-                    default:
-                        return 'Melee or Ranged Weapon Attack';
-                }
-            case "hit":
-                return `Roll: ${modifier(value)}`;
-            case "h":
-                return 'Hit: ';
-            case "spell":
-            case "status":
-            case "condition":
-            case "creature":
-            case "item":
-            case "quickref":
-            case "adventure":
-            case "sense":
-            case "deity":
-            case "table":
-            case "variantrule":
-                return value.split("|")[0];
-            default:
-                return value.split(" ")[0];
-        }
-    }
+const bookLookup = new Map<string, string>([
+    ["XMM", "Monster Manual (2024)"],
+    ["MM", "Monster Manual"]
+]);
 
-    function sanitizeContent(content: string): string {
-        return content = content.replace(/\{@(\w+)(?:\s+([^}]+))?\}/g, (_, token, value) => {
-            const evaluated = evaluate(token, value ?? "");
-            return evaluated;
-        });
-    }
+export function importSpells(json: string): string {
+    const sanitized = sanitizeContent(json);
+    const parsed = JSON.parse(sanitized) as Spells;
+    const spells = parsed.spell
+        .map(transformSpell)
+        .map(spell => [spell.name, spell])
 
-    const inScopeBooks = new Set<string>(["XMM"]);
+    console.log(spells);
 
-    const bookLookup = new Map<string, string>([
-        ["XMM", "Monster Manual (2024)"],
-        ["MM", "Monster Manual"]
-    ]);
+    return JSON.stringify(Object.fromEntries(spells), null, 2)
+}
 
+export function importBestiary(json: string): string {
     const sanitized = sanitizeContent(json);
     const parsed = JSON.parse(sanitized) as Bestiary;
 
