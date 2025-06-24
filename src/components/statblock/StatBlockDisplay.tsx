@@ -11,7 +11,7 @@ import {
     Skeleton,
     Card
 } from '@mantine/core';
-import { StatBlock } from '../model/StatBlock';
+import { StatBlock } from '../../model/StatBlock';
 
 type Props = {
     statBlock: StatBlock;

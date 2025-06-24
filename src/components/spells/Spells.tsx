@@ -1,7 +1,7 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { Context } from "../../model/Context";
-import { Box, Grid, Table } from "@mantine/core";
-import { useNavigate, useSearchParams } from "react-router";
+import { Box, Grid } from "@mantine/core";
+import { useSearchParams } from "react-router";
 import { SpellDisplay } from "./SpellDisplay";
 import { DataTable } from "../table/DataTable";
 

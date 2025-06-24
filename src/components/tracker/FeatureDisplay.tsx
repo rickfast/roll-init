@@ -1,4 +1,4 @@
-import { Feature } from "../model/StatBlock";
+import { Feature } from "../../model/StatBlock";
 
 interface Props {
     features: Feature[];

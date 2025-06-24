@@ -16,7 +16,7 @@ export interface StatBlock {
     legendaryActions?: Feature[];
     name: string;
     reactions?: Feature[];
-    savingThrows: Record<'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha', number>;
+    savingThrows: SavingThrows;
     senses?: string;
     size: Size;
     skills?: { [key: string]: number };
@@ -28,6 +28,8 @@ export interface StatBlock {
     source?: string;
     [property: string]: any;
 }
+
+export type SavingThrows = Record<'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha', number>;
 
 export interface Speed {
     type: string;

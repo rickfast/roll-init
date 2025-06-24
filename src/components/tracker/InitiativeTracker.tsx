@@ -1,5 +1,5 @@
 import { Combatant } from "../../model/Combatant";
-import { ActionIcon, Affix, Button, MultiSelect, Table } from "@mantine/core";
+import { ActionIcon, Affix, Button, Drawer, MultiSelect, Table } from "@mantine/core";
 import { AddCombatantRow } from "./AddCombatantRow";
 import { useContext } from "react";
 import { Context } from "../../model/Context";
@@ -11,6 +11,7 @@ import { ClickInput } from "./ClickInput";
 import { FeatureModal } from "./FeatureModal";
 import { conditions } from "../../model/data";
 import { showNotification } from "@mantine/notifications";
+import { Saves } from "./Saves";
 
 export const InitiativeTracker = () => {
     const {
@@ -64,7 +65,10 @@ export const InitiativeTracker = () => {
                     {allCombatants()
                         .map(([id, combatant], index) => {
                             return <Table.Tr key={id} style={{ backgroundColor: selected === index ? '#3b3b3b' : 'transparent' }}>
-                                <Table.Td colSpan={2}>{combatant.name} {combatant.discriminator ? combatant.discriminator : ''}</Table.Td>
+                                <Table.Td colSpan={2}>
+                                    {combatant.name} {combatant.discriminator ? combatant.discriminator : ''}<br />
+                                    {combatant.statBlock?.savingThrows && <Saves statBlock={combatant.statBlock} />}   
+                                </Table.Td>
                                 <Table.Td><NumberCell initialValue={combatant.hp} label="HP" onChange={(hp) => updateCombatant(id, { hp })} /></Table.Td>
                                 <Table.Td><ClickInput initialValue={combatant.ac} onChange={(ac) => updateCombatant(id, { ac })} /></Table.Td>
                                 <Table.Td><ClickInput initialValue={combatant.initiative} onChange={(initiative) => updateCombatant(id, { initiative })} /></Table.Td>
@@ -99,6 +103,9 @@ export const InitiativeTracker = () => {
                     }} />
                 </Table.Tbody>
             </Table>
+            <Drawer opened={false} onClose={() => {}} title="Stat Block" size="xl">
+
+            </Drawer>
         </>
     );
 }

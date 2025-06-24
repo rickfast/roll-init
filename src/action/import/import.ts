@@ -78,7 +78,7 @@ export function importBestiary(json: string): string {
         .map((monster: Monster) => {
             const statBlock: StatBlock = transform(monster);
             statBlock.source = bookLookup.get(monster.source) || "Unknown";
-            // console.log(`Transformed stat block for ${monster.name}:`, statBlock);
+            
             return statBlock;
         }).map(statBlock => {
             return [statBlock.name, statBlock] as [string, StatBlock];

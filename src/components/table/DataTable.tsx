@@ -3,7 +3,7 @@ import { Grid, ScrollArea, Table } from "@mantine/core";
 import { useNavigate, useSearchParams } from "react-router";
 import { Filter, filterCatalog, FilterType } from "../../model/Filter";
 import { useScrollIntoView } from "@mantine/hooks";
-import { FilterPopover } from "./FilterPopover";
+import { TextFilter } from "./FilterPopover";
 
 export interface Field {
     name: string;
@@ -74,8 +74,8 @@ export function DataTable<T>({ fields, data, path, actions }: Props<T>) {
                                         <Grid.Col span={10}>
                                             {field.name}                                            
                                         </Grid.Col>
-                                        <Grid.Col span={2}>
-                                            {field.filter && <FilterPopover onClear={() => clearFilter(field.field)} onFilter={(value => setFilter(field.field, field.filter!, value))} />}
+                                        <Grid.Col span={2} style={{ textAlign: 'right' }}>
+                                            {field.filter && <TextFilter onClear={() => clearFilter(field.field)} onFilter={(value => setFilter(field.field, field.filter!, value))} />}
                                         </Grid.Col>
                                     </Grid>
                                 </Table.Th>

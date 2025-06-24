@@ -26,6 +26,7 @@ export const NumberCell = ({ initialValue, label, onChange }: Props) => {
                     onChange={(e) => {
                         setValue(Number(e.currentTarget.value));
                     }}
+                    autoFocus
                     onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                             onChange(initialValue + (value * (multiplier || 1)));

@@ -15,6 +15,7 @@ import {
 import { GiShield as IconShield, GiHeartArmor as IconHeart, GiLightningArc as IconBolt } from 'react-icons/gi';
 // import { IconShield, IconHeart, IconBolt } from '@tabler/icons-react';
 import { StatBlock } from '../../model/StatBlock';
+import { formatModifier, getModifier } from '../../util';
 
 interface StatBlockDisplayProps {
     statBlock: StatBlock;
@@ -22,14 +23,6 @@ interface StatBlockDisplayProps {
 }
 
 export const StatBlockDisplay2 = ({ statBlock, loading = false }: StatBlockDisplayProps) => {
-    const getModifier = (score: number) => {
-        return Math.floor((score - 10) / 2);
-    };
-
-    const formatModifier = (modifier: number) => {
-        return modifier >= 0 ? `+${modifier}` : `${modifier}`;
-    };
-
     const getSizeColor = (size: string) => {
         const colors: Record<string, string> = {
             'Tiny': 'grape',
