@@ -7,7 +7,9 @@ interface Props {
 }
 
 export const NavActionButton = ({ icon, href }: Props) => {
-    return <ActionIcon component={NavLink} to={href} variant="outline">
-        {icon}
-    </ActionIcon>
+    return (
+        <ActionIcon component={NavLink} to={href} variant="outline">
+            {icon}
+        </ActionIcon>
+    );
 };

@@ -3,12 +3,18 @@ import { StatBlock } from "./StatBlock";
 export interface Combatant {
     id: string;
     name: string;
-    discriminator?: string;
     initiative: number;
     hp: number;
     ac: number;
     conditions: string[];
     statBlock?: StatBlock;
+    discriminator?: Discriminator;
+    locked?: boolean;
+}
+
+export interface Discriminator {
+    type: "color" | "number";
+    value: string | number;
 }
 
 export function fromStatBlock(statBlock: StatBlock): Combatant {
@@ -19,6 +25,6 @@ export function fromStatBlock(statBlock: StatBlock): Combatant {
         hp: statBlock.hitPoints.value,
         ac: statBlock.armorClass,
         conditions: [],
-        statBlock
+        statBlock,
     };
 }

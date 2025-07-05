@@ -45,7 +45,7 @@ export const AddCombatantRow = ({ onAddCombatant }: Props) => {
 
     return (
         <Table.Tr>
-            <Table.Td colSpan={2}>
+            <Table.Td colSpan={4}>
                 <Autocomplete
                     data={bestiaryKv}
                     key={form.key('name')}
@@ -65,15 +65,15 @@ export const AddCombatantRow = ({ onAddCombatant }: Props) => {
                     clearable />
             </Table.Td>
             {/* <Table.Td /> */}
-            <Table.Td style={{ textAlign: 'center' }}>
+            <Table.Td  colSpan={2} style={{ textAlign: 'center' }}>
                 <TextInput placeholder="HP" key={form.key('hp')} {...form.getInputProps('hp')} />
             </Table.Td>
-            <Table.Td style={{ textAlign: 'center' }}>
+            <Table.Td  colSpan={1} style={{ textAlign: 'center' }}>
                 <TextInput placeholder="AC" key={form.key('ac')} {...form.getInputProps('ac')}></TextInput>
             </Table.Td>
             <Table.Td colSpan={1} style={{ textAlign: 'center' }} />
-            <Table.Td colSpan={1} style={{ textAlign: 'center' }} />
-            <Table.Td colSpan={1} style={{ textAlign: 'center' }}>
+            <Table.Td colSpan={3} style={{ textAlign: 'center' }} />
+            <Table.Td colSpan={2} style={{ textAlign: 'center' }}>
                 <ButtonGroup>
                     <ActionIcon variant="filled" color="blue" disabled={!valid} onClick={() => {
                         const newCombatant: Combatant = {

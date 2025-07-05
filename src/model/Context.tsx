@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { createContext, ReactNode, useEffect } from "react";
 import { useViewModel, ViewModel } from "./useViewModel";
@@ -13,20 +13,18 @@ interface Props {
 
 export const ContextProvider: React.FC<Props> = ({ children }) => {
     const viewModel = useViewModel({
-        bestiary: {}        
+        bestiary: {},
     });
 
     useEffect(() => {
         console.log("Loading initial data from store");
         store.load().then((data) => {
             viewModel.importMonsters(data.bestiary);
+            viewModel.importSpells(data.spells || {});
+            viewModel.setApiKey(data.apiKey || "");
             viewModel.setCombatants(new Map(data.tracker?.combatants || []));
         });
     }, []);
 
-    return (
-        <Context.Provider value={viewModel}>
-            {children}
-        </Context.Provider>
-    );
-}
+    return <Context.Provider value={viewModel}>{children}</Context.Provider>;
+};
