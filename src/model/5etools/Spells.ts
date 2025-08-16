@@ -3,44 +3,75 @@ export interface Spells {
 }
 
 export interface Spell {
-    name:                 string;
-    source:               SpellSource;
-    page:                 number;
-    srd?:                 boolean | string;
-    basicRules?:          boolean;
-    reprintedAs:          string[];
-    level:                number;
-    school:               School;
-    time:                 Time[];
-    range:                Range;
-    components:           Components;
-    duration:             DurationElement[];
-    entries:              Array<PurpleEntry | string>;
-    scalingLevelDice?:    ScalingLevelDice;
-    damageInflict?:       string[];
-    savingThrow?:         AbilityCheck[];
-    miscTags?:            string[];
-    areaTags?:            AreaTag[];
-    otherSources?:        OtherSource[];
-    entriesHigherLevel?:  EntriesHigherLevel[];
-    meta?:                Meta;
-    conditionInflict?:    string[];
+    name: string;
+    source: SpellSource;
+    page: number;
+    srd?: boolean | string;
+    basicRules?: boolean;
+    reprintedAs: string[];
+    level: number;
+    school: School;
+    time: Time[];
+    range: Range;
+    components: Components;
+    duration: DurationElement[];
+    entries: Array<PurpleEntry | string>;
+    scalingLevelDice?: ScalingLevelDice;
+    damageInflict?: string[];
+    savingThrow?: AbilityCheck[];
+    miscTags?: string[];
+    areaTags?: AreaTag[];
+    otherSources?: OtherSource[];
+    entriesHigherLevel?: EntriesHigherLevel[];
+    meta?: Meta;
+    conditionInflict?: string[];
     affectsCreatureType?: AffectsCreatureType[];
-    damageResist?:        string[];
-    hasFluffImages?:      boolean;
-    spellAttack?:         SpellAttack[];
-    abilityCheck?:        AbilityCheck[];
-    alias?:               string[];
-    conditionImmune?:     string[];
-    damageVulnerable?:    string[];
-    damageImmune?:        string[];
+    damageResist?: string[];
+    hasFluffImages?: boolean;
+    spellAttack?: SpellAttack[];
+    abilityCheck?: AbilityCheck[];
+    alias?: string[];
+    conditionImmune?: string[];
+    damageVulnerable?: string[];
+    damageImmune?: string[];
 }
 
-export type AbilityCheck = "strength" | "intelligence" | "dexterity" | "wisdom" | "charisma" | "constitution";
+export type AbilityCheck =
+    | "strength"
+    | "intelligence"
+    | "dexterity"
+    | "wisdom"
+    | "charisma"
+    | "constitution";
 
-export type AffectsCreatureType = "beast" | "humanoid" | "aberration" | "celestial" | "dragon" | "elemental" | "fey" | "fiend" | "giant" | "monstrosity" | "ooze" | "plant" | "construct" | "undead";
+export type AffectsCreatureType =
+    | "beast"
+    | "humanoid"
+    | "aberration"
+    | "celestial"
+    | "dragon"
+    | "elemental"
+    | "fey"
+    | "fiend"
+    | "giant"
+    | "monstrosity"
+    | "ooze"
+    | "plant"
+    | "construct"
+    | "undead";
 
-export type AreaTag = "MT" | "ST" | "C" | "S" | "W" | "N" | "Y" | "R" | "Q" | "L" | "H";
+export type AreaTag =
+    | "MT"
+    | "ST"
+    | "C"
+    | "S"
+    | "W"
+    | "N"
+    | "Y"
+    | "R"
+    | "Q"
+    | "L"
+    | "H";
 
 export interface Components {
     v?: boolean;
@@ -49,22 +80,22 @@ export interface Components {
 }
 
 export interface MClass {
-    text:     string;
-    cost?:    number;
+    text: string;
+    cost?: number;
     consume?: boolean | string;
 }
 
 export interface DurationElement {
-    type:           FluffyType;
-    duration?:      DurationDuration;
+    type: FluffyType;
+    duration?: DurationDuration;
     concentration?: boolean;
-    ends?:          End[];
+    ends?: End[];
 }
 
 export interface DurationDuration {
-    type:   PurpleType;
+    type: PurpleType;
     amount: number;
-    upTo?:  boolean;
+    upTo?: boolean;
 }
 
 export type PurpleType = "hour" | "minute" | "day" | "round";
@@ -74,18 +105,18 @@ export type End = "dispel" | "trigger";
 export type FluffyType = "instant" | "timed" | "permanent" | "special";
 
 export interface PurpleEntry {
-    type:       EntryType;
-    name?:      string;
-    entries?:   Array<FluffyEntry | string>;
-    caption?:   string;
+    type: EntryType;
+    name?: string;
+    entries?: Array<FluffyEntry | string>;
+    caption?: string;
     colLabels?: string[];
     colStyles?: string[];
-    rows?:      Array<Array<RowClass | string>>;
-    items?:     string[];
+    rows?: Array<Array<RowClass | string>>;
+    items?: string[];
 }
 
 export interface FluffyEntry {
-    type:  EntryType;
+    type: EntryType;
     items: string[];
 }
 
@@ -98,16 +129,16 @@ export interface RowClass {
 
 export interface Roll {
     exact?: number;
-    min?:   number;
-    max?:   number;
-    pad?:   boolean;
+    min?: number;
+    max?: number;
+    pad?: boolean;
 }
 
 export type RowType = "cell";
 
 export interface EntriesHigherLevel {
-    type:    EntryType;
-    name:    Name;
+    type: EntryType;
+    name: Name;
     entries: string[];
 }
 
@@ -119,27 +150,41 @@ export interface Meta {
 
 export interface OtherSource {
     source: OtherSourceSource;
-    page:   number;
+    page: number;
 }
 
 export type OtherSourceSource = "RMR";
 
 export interface Range {
-    type:      RangeType;
+    type: RangeType;
     distance?: Distance;
 }
 
 export interface Distance {
-    type:    DistanceType;
+    type: DistanceType;
     amount?: number;
 }
 
-export type DistanceType = "feet" | "self" | "touch" | "miles" | "sight" | "unlimited";
+export type DistanceType =
+    | "feet"
+    | "self"
+    | "touch"
+    | "miles"
+    | "sight"
+    | "unlimited";
 
-export type RangeType = "point" | "radius" | "sphere" | "cone" | "special" | "line" | "hemisphere" | "cube";
+export type RangeType =
+    | "point"
+    | "radius"
+    | "sphere"
+    | "cone"
+    | "special"
+    | "line"
+    | "hemisphere"
+    | "cube";
 
 export interface ScalingLevelDice {
-    label:   string;
+    label: string;
     scaling: { [key: string]: string };
 }
 
@@ -150,8 +195,8 @@ export type SpellSource = "PHB";
 export type SpellAttack = "M" | "R";
 
 export interface Time {
-    number:     number;
-    unit:       Unit;
+    number: number;
+    unit: Unit;
     condition?: string;
 }
 

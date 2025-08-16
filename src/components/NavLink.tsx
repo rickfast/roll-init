@@ -7,11 +7,11 @@ interface Props {
     icon: React.ReactNode;
 }
 
-export const NavLink = ({ href, label, icon }: Props) =>
+export const NavLink = ({ href, label, icon }: Props) => (
     <MantineNavLink
         href={href}
         renderRoot={(props) => <RouterLink to={href} {...props} />}
         label={label}
-        leftSection={icon} />
-
-
+        leftSection={icon}
+    />
+);

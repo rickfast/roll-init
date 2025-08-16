@@ -3,7 +3,7 @@ export interface StatBlock {
     actions: Feature[];
     alignment: string;
     initiativeBonus?: number;
-    armorClass: number;// | ArmorClassObject;
+    armorClass: number; // | ArmorClassObject;
     bonusActions?: Feature[];
     challengeRating: number;
     conditionImmunities: string[];
@@ -16,7 +16,7 @@ export interface StatBlock {
     legendaryActions?: Feature[];
     name: string;
     reactions?: Feature[];
-    savingThrows: Record<'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha', number>;
+    savingThrows: SavingThrows;
     senses?: string;
     size: Size;
     skills?: { [key: string]: number };
@@ -28,6 +28,11 @@ export interface StatBlock {
     source?: string;
     [property: string]: any;
 }
+
+export type SavingThrows = Record<
+    "str" | "dex" | "con" | "int" | "wis" | "cha",
+    number
+>;
 
 export interface Speed {
     type: string;
@@ -66,7 +71,20 @@ export type Type = "recharge" | "perDay" | "perRest";
 //     [property: string]: any;
 // }
 
-export type DamageType = "acid" | "bludgeoning" | "cold" | "fire" | "force" | "lightning" | "necrotic" | "piercing" | "poison" | "psychic" | "radiant" | "slashing" | "thunder";
+export type DamageType =
+    | "acid"
+    | "bludgeoning"
+    | "cold"
+    | "fire"
+    | "force"
+    | "lightning"
+    | "necrotic"
+    | "piercing"
+    | "poison"
+    | "psychic"
+    | "radiant"
+    | "slashing"
+    | "thunder";
 // export type DamageType = "cold" | "acid" | "lightning" | "fire" | "poison" | "thunder" | "psychic" | "necrotic" | "slashing" | "radiant" | "bludgeoning" | "piercing"
 
 export interface HitPointsObject {
@@ -75,9 +93,39 @@ export interface HitPointsObject {
     [property: string]: any;
 }
 
-export type Language = "Common" | "Dwarvish" | "Elvish" | "Giant" | "Gnomish" | "Goblin" | "Halfling" | "Orc" | "Abyssal" | "Celestial" | "Draconic" | "Deep Speech" | "Infernal" | "Primordial" | "Sylvan" | "Undercommon" | "Aquan" | "Auran" | "Ignan" | "Terran" | "Telepathy" | "Thieves’ Cant" | "Druidic" | "Any";
+export type Language =
+    | "Common"
+    | "Dwarvish"
+    | "Elvish"
+    | "Giant"
+    | "Gnomish"
+    | "Goblin"
+    | "Halfling"
+    | "Orc"
+    | "Abyssal"
+    | "Celestial"
+    | "Draconic"
+    | "Deep Speech"
+    | "Infernal"
+    | "Primordial"
+    | "Sylvan"
+    | "Undercommon"
+    | "Aquan"
+    | "Auran"
+    | "Ignan"
+    | "Terran"
+    | "Telepathy"
+    | "Thieves’ Cant"
+    | "Druidic"
+    | "Any";
 
-export type Size = "Tiny" | "Small" | "Medium" | "Large" | "Huge" | "Gargantuan";
+export type Size =
+    | "Tiny"
+    | "Small"
+    | "Medium"
+    | "Large"
+    | "Huge"
+    | "Gargantuan";
 
 export interface Spellcasting {
     ability: string;

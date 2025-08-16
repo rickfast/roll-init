@@ -8,9 +8,9 @@ import {
     Divider,
     Box,
     Flex,
-    Paper
-} from '@mantine/core';
-import { Spell } from '../../model/Spell';
+    Paper,
+} from "@mantine/core";
+import { Spell } from "../../model/Spell";
 
 interface SpellDisplayProps {
     spell: Spell;
@@ -22,12 +22,16 @@ export const SpellDisplay = ({ spell }: SpellDisplayProps) => {
         if (duration === 1) {
             return `1 ${type}`;
         }
-        return `${duration} ${type}${duration > 1 ? 's' : ''}`;
+        return `${duration} ${type}${duration > 1 ? "s" : ""}`;
     };
 
     const formatRange = () => {
-        if (spell.range.type === 'Self' || spell.range.type === 'Touch' || 
-            spell.range.type === 'Sight' || spell.range.type === 'Unlimited') {
+        if (
+            spell.range.type === "Self" ||
+            spell.range.type === "Touch" ||
+            spell.range.type === "Sight" ||
+            spell.range.type === "Unlimited"
+        ) {
             return spell.range.type;
         }
         return `${spell.range.distance} ${spell.range.type.toLowerCase()}`;
@@ -35,38 +39,38 @@ export const SpellDisplay = ({ spell }: SpellDisplayProps) => {
 
     const formatComponents = () => {
         const components = [];
-        if (spell.components.verbal) components.push('V');
-        if (spell.components.somatic) components.push('S');
+        if (spell.components.verbal) components.push("V");
+        if (spell.components.somatic) components.push("S");
         if (spell.components.material) {
             if (spell.components.materialComponents) {
                 components.push(`M (${spell.components.materialComponents})`);
             } else {
-                components.push('M');
+                components.push("M");
             }
         }
-        return components.join(', ');
+        return components.join(", ");
     };
 
     const getSchoolColor = (school: string) => {
         const colors: Record<string, string> = {
-            'Abjuration': 'blue',
-            'Conjuration': 'yellow',
-            'Divination': 'purple',
-            'Enchantment': 'pink',
-            'Evocation': 'red',
-            'Illusion': 'indigo',
-            'Necromancy': 'dark',
-            'Transmutation': 'green'
+            Abjuration: "blue",
+            Conjuration: "yellow",
+            Divination: "purple",
+            Enchantment: "pink",
+            Evocation: "red",
+            Illusion: "indigo",
+            Necromancy: "dark",
+            Transmutation: "green",
         };
-        return colors[school] || 'gray';
+        return colors[school] || "gray";
     };
 
     const getLevelColor = (level: string) => {
-        if (level === 'Cantrip') return 'gray';
+        if (level === "Cantrip") return "gray";
         const levelNum = parseInt(level);
-        if (levelNum <= 3) return 'green';
-        if (levelNum <= 6) return 'yellow';
-        return 'red';
+        if (levelNum <= 3) return "green";
+        if (levelNum <= 6) return "yellow";
+        return "red";
     };
 
     return (
@@ -74,12 +78,20 @@ export const SpellDisplay = ({ spell }: SpellDisplayProps) => {
             <Stack gap="md">
                 {/* Header */}
                 <Box>
-                    <Title order={2} mb="xs">{spell.name}</Title>
+                    <Title order={2} mb="xs">
+                        {spell.name}
+                    </Title>
                     <Group gap="xs">
-                        <Badge color={getLevelColor(spell.level)} variant="filled">
+                        <Badge
+                            color={getLevelColor(spell.level)}
+                            variant="filled"
+                        >
                             {spell.level} Level
                         </Badge>
-                        <Badge color={getSchoolColor(spell.school)} variant="outline">
+                        <Badge
+                            color={getSchoolColor(spell.school)}
+                            variant="outline"
+                        >
                             {spell.school}
                         </Badge>
                         {spell.ritual && (
@@ -115,7 +127,8 @@ export const SpellDisplay = ({ spell }: SpellDisplayProps) => {
                         <Flex justify="space-between">
                             <Text fw={500}>Duration:</Text>
                             <Text>
-                                {spell.concentration ? 'Concentration, ' : ''}{spell.duration}
+                                {spell.concentration ? "Concentration, " : ""}
+                                {spell.duration}
                             </Text>
                         </Flex>
                     </Stack>
@@ -124,10 +137,16 @@ export const SpellDisplay = ({ spell }: SpellDisplayProps) => {
                 {/* Classes */}
                 {spell.classes.length > 0 && (
                     <Box>
-                        <Text fw={500} mb="xs">Classes:</Text>
+                        <Text fw={500} mb="xs">
+                            Classes:
+                        </Text>
                         <Group gap="xs">
                             {spell.classes.map((className) => (
-                                <Badge key={className} variant="light" color="teal">
+                                <Badge
+                                    key={className}
+                                    variant="light"
+                                    color="teal"
+                                >
                                     {className}
                                 </Badge>
                             ))}
@@ -143,7 +162,9 @@ export const SpellDisplay = ({ spell }: SpellDisplayProps) => {
                         {spell.description.map((entry, index) => (
                             <Box key={index}>
                                 {entry.title && (
-                                    <Text fw={600} mb="xs">{entry.title}</Text>
+                                    <Text fw={600} mb="xs">
+                                        {entry.title}
+                                    </Text>
                                 )}
                                 <Text>{entry.text}</Text>
                             </Box>
@@ -156,7 +177,9 @@ export const SpellDisplay = ({ spell }: SpellDisplayProps) => {
                     <>
                         <Divider />
                         <Box>
-                            <Text fw={600} mb="xs">At Higher Levels</Text>
+                            <Text fw={600} mb="xs">
+                                At Higher Levels
+                            </Text>
                             <Text>{spell.higherLevel}</Text>
                         </Box>
                     </>

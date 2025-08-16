@@ -1,14 +1,18 @@
 import { Combatant } from "../../model/Combatant";
 import { ActionIcon, Autocomplete, ButtonGroup, Table, TextInput } from "@mantine/core";
 import { IoMdPersonAdd } from "react-icons/io";
-import { bestiary, bestiaryKv } from "../../model/bestiary";
 import { useForm } from "@mantine/form";
+import { useContext } from "react";
+import { Context } from "../../model/Context";
 
 interface Props {
     onAddCombatant: (combatant: Combatant, quantity: number) => void;
 }
 
 export const AddCombatantRow = ({ onAddCombatant }: Props) => {
+    const { bestiary } = useContext(Context);
+    const bestiaryKv = Object.keys(bestiary);
+    
     const form = useForm({
         mode: 'controlled',
         initialValues: {
@@ -41,7 +45,7 @@ export const AddCombatantRow = ({ onAddCombatant }: Props) => {
 
     return (
         <Table.Tr>
-            <Table.Td colSpan={2}>
+            <Table.Td colSpan={4}>
                 <Autocomplete
                     data={bestiaryKv}
                     key={form.key('name')}
@@ -61,15 +65,15 @@ export const AddCombatantRow = ({ onAddCombatant }: Props) => {
                     clearable />
             </Table.Td>
             {/* <Table.Td /> */}
-            <Table.Td style={{ textAlign: 'center' }}>
+            <Table.Td  colSpan={2} style={{ textAlign: 'center' }}>
                 <TextInput placeholder="HP" key={form.key('hp')} {...form.getInputProps('hp')} />
             </Table.Td>
-            <Table.Td style={{ textAlign: 'center' }}>
+            <Table.Td  colSpan={1} style={{ textAlign: 'center' }}>
                 <TextInput placeholder="AC" key={form.key('ac')} {...form.getInputProps('ac')}></TextInput>
             </Table.Td>
             <Table.Td colSpan={1} style={{ textAlign: 'center' }} />
-            <Table.Td colSpan={1} style={{ textAlign: 'center' }} />
-            <Table.Td colSpan={1} style={{ textAlign: 'center' }}>
+            <Table.Td colSpan={3} style={{ textAlign: 'center' }} />
+            <Table.Td colSpan={2} style={{ textAlign: 'center' }}>
                 <ButtonGroup>
                     <ActionIcon variant="filled" color="blue" disabled={!valid} onClick={() => {
                         const newCombatant: Combatant = {
@@ -81,7 +85,15 @@ export const AddCombatantRow = ({ onAddCombatant }: Props) => {
                             conditions: [],
                             discriminator: undefined,
                             // @ts-ignore
-                            statBlock: bestiary[form.values.name],
+                            statBlock: bestiary[form.values.name] || {
+                                name: form.values.name,
+                                hitPoints: { value: parseInt(form.values.hp) },
+                                armorClass: parseInt(form.values.ac),
+                                actions: [],
+                                reactions: [],
+                                legendaryActions: [],
+                                traits: [],
+                            },
                         };
                         onAddCombatant(newCombatant, form.values.quantity ? parseInt(form.values.quantity) : 1);
                         form.reset();

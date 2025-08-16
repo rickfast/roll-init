@@ -21,27 +21,28 @@ export const ClickInput: React.FC<{
         }
     };
 
-    return (
-        editable ?
-            <Input
-                styles={{
-                    input: {
-                        width: 42
-                    }
-                }}
-                type="number"
-                defaultValue={initialValue}
-                onBlur={() => {
+    return editable ? (
+        <Input
+            styles={{
+                input: {
+                    width: 42,
+                },
+            }}
+            type="number"
+            defaultValue={initialValue}
+            onBlur={() => {
+                setEditable(false);
+            }}
+            onKeyDown={(e) => {
+                if (e.key === "Enter") {
                     setEditable(false);
-                }}
-                onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                        setEditable(false);
-                    }
-                }}
-                onChange={onValueChange}
-                autoFocus
-                ref={inputRef}
-            /> : <Text onClick={() => setEditable(true)}>{initialValue}</Text>
-    )
-}
+                }
+            }}
+            onChange={onValueChange}
+            autoFocus
+            ref={inputRef}
+        />
+    ) : (
+        <Text onClick={() => setEditable(true)}>{initialValue}</Text>
+    );
+};

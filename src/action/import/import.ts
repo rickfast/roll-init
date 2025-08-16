@@ -14,16 +14,16 @@ function evaluate(token: string, value: string) {
         case "atkr":
             switch (value) {
                 case "m":
-                    return 'Melee Weapon Attack';
+                    return "Melee Weapon Attack";
                 case "r":
-                    return 'Ranged Weapon Attack';
+                    return "Ranged Weapon Attack";
                 default:
-                    return 'Melee or Ranged Weapon Attack';
+                    return "Melee or Ranged Weapon Attack";
             }
         case "hit":
             return `Roll: ${modifier(value)}`;
         case "h":
-            return 'Hit: ';
+            return "Hit: ";
         case "spell":
         case "status":
         case "condition":
@@ -42,17 +42,20 @@ function evaluate(token: string, value: string) {
 }
 
 function sanitizeContent(content: string): string {
-    return content = content.replace(/\{@(\w+)(?:\s+([^}]+))?\}/g, (_, token, value) => {
-        const evaluated = evaluate(token, value ?? "");
-        return evaluated;
-    });
+    return (content = content.replace(
+        /\{@(\w+)(?:\s+([^}]+))?\}/g,
+        (_, token, value) => {
+            const evaluated = evaluate(token, value ?? "");
+            return evaluated;
+        }
+    ));
 }
 
 const inScopeBooks = new Set<string>(["XMM"]);
 
 const bookLookup = new Map<string, string>([
     ["XMM", "Monster Manual (2024)"],
-    ["MM", "Monster Manual"]
+    ["MM", "Monster Manual"],
 ]);
 
 export function importSpells(json: string): string {
@@ -60,11 +63,11 @@ export function importSpells(json: string): string {
     const parsed = JSON.parse(sanitized) as Spells;
     const spells = parsed.spell
         .map(transformSpell)
-        .map(spell => [spell.name, spell])
+        .map((spell) => [spell.name, spell]);
 
     console.log(spells);
 
-    return JSON.stringify(Object.fromEntries(spells), null, 2)
+    return JSON.stringify(Object.fromEntries(spells), null, 2);
 }
 
 export function importBestiary(json: string): string {
@@ -72,15 +75,16 @@ export function importBestiary(json: string): string {
     const parsed = JSON.parse(sanitized) as Bestiary;
 
     const monsters = parsed.monster
-        .filter(monster => !monster.hasOwnProperty("_copy"))
-        .filter(monster => monster.ac != undefined)
-        .filter(monster => inScopeBooks.has(monster.source))
+        .filter((monster) => !monster.hasOwnProperty("_copy"))
+        .filter((monster) => monster.ac != undefined)
+        .filter((monster) => inScopeBooks.has(monster.source))
         .map((monster: Monster) => {
             const statBlock: StatBlock = transform(monster);
             statBlock.source = bookLookup.get(monster.source) || "Unknown";
-            // console.log(`Transformed stat block for ${monster.name}:`, statBlock);
+
             return statBlock;
-        }).map(statBlock => {
+        })
+        .map((statBlock) => {
             return [statBlock.name, statBlock] as [string, StatBlock];
         });
 

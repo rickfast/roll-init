@@ -14,55 +14,65 @@ import { DataTable } from "../table/DataTable";
 export const Bestiary = () => {
     const { bestiary, addCombatant } = useContext(Context);
     const [searchParams] = useSearchParams();
-    const selected = searchParams.get('id');
+    const selected = searchParams.get("id");
     const { scrollableRef } = useScrollIntoView();
 
     return (
         <Box mx="auto">
             <Grid>
                 <Grid.Col span={6}>
-                    <ScrollArea h={window.innerHeight - 100} viewportRef={scrollableRef}>
+                    <ScrollArea
+                        h={window.innerHeight - 100}
+                        viewportRef={scrollableRef}
+                    >
                         <DataTable
                             fields={[
                                 {
-                                    name: 'Name',
-                                    field: 'name',
-                                    filter: 'like'
+                                    name: "Name",
+                                    field: "name",
+                                    filter: "like",
                                 },
                                 {
-                                    name: 'Type',
-                                    field: 'type'
+                                    name: "Type",
+                                    field: "type",
                                 },
                                 {
-                                    name: 'CR',
-                                    field: 'challengeRating'
-                                }
+                                    name: "CR",
+                                    field: "challengeRating",
+                                },
                             ]}
                             data={bestiary}
                             path="/bestiary"
-                            actions={(id, monster) =>
+                            actions={(id, monster) => (
                                 <>
-                                    <NavActionButton icon={<FaEdit />} href={`/statblock?id=${id}`} />
-                                    <TrackActionIcon onChange={(quantity) => {
-                                        addCombatant(fromStatBlock(monster), quantity);
-                                        showNotification({
-                                            title: 'Combatant Added',
-                                            message: `Added ${quantity} ${monster.name}(s) to Initiative Tracker.`,
-                                            color: 'green',
-                                        });
-                                    }} />
+                                    <NavActionButton
+                                        icon={<FaEdit />}
+                                        href={`/statblock?id=${id}`}
+                                    />
+                                    <TrackActionIcon
+                                        onChange={(quantity) => {
+                                            addCombatant(
+                                                fromStatBlock(monster),
+                                                quantity
+                                            );
+                                            showNotification({
+                                                title: "Combatant Added",
+                                                message: `Added ${quantity} ${monster.name}(s) to Initiative Tracker.`,
+                                                color: "green",
+                                            });
+                                        }}
+                                    />
                                 </>
-                            }
+                            )}
                         />
                     </ScrollArea>
                 </Grid.Col>
                 <Grid.Col span={6}>
                     {selected && (
-                        <StatBlockDisplay2
-                            statBlock={bestiary[selected]} />
+                        <StatBlockDisplay2 statBlock={bestiary[selected]} />
                     )}
                 </Grid.Col>
             </Grid>
         </Box>
     );
-}
+};

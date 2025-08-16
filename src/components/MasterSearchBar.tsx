@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { Autocomplete } from "@mantine/core"
+import { Autocomplete } from "@mantine/core";
 import { useContext, useRef, useState } from "react";
-import { FaSearch } from "react-icons/fa"
+import { FaSearch } from "react-icons/fa";
 import { GiSpikedDragonHead, GiBoltSpellCast } from "react-icons/gi";
 import { Context } from "../model/Context";
 import { NavLink } from "./NavLink";
 
 const typeToIcons: { [type: string]: React.ReactNode } = {
-    'spell': <GiBoltSpellCast />,
-    'monster': <GiSpikedDragonHead />,
-}
+    spell: <GiBoltSpellCast />,
+    monster: <GiSpikedDragonHead />,
+};
 
 export const MasterSearchBar = () => {
     const { searchable } = useContext(Context);
-    const [value, setValue] = useState('');
+    const [value, setValue] = useState("");
     const data = Array.from(searchable.keys()).sort();
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -28,7 +28,13 @@ export const MasterSearchBar = () => {
                 const item = searchable.get(input.option.value)!;
                 const icon = typeToIcons[item.type] || null;
 
-                return <NavLink icon={icon} href={`${item.href}&search=1`} label={item.value} />
+                return (
+                    <NavLink
+                        icon={icon}
+                        href={`${item.href}&search=1`}
+                        label={item.value}
+                    />
+                );
             }}
             rightSectionWidth={42}
             rightSection={<FaSearch />}
@@ -37,5 +43,5 @@ export const MasterSearchBar = () => {
             ref={inputRef}
             onClick={() => inputRef.current?.select()}
         />
-    )
-}
+    );
+};
