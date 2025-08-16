@@ -13,17 +13,18 @@ import { useContext } from "react";
 import { Context } from "../../model/Context";
 import { PiPlayBold } from "react-icons/pi";
 import { FaDiceD20, FaSearch, FaSortAmountDown } from "react-icons/fa";
-import { RiSkullLine } from "react-icons/ri";
+import { RiDeleteBin2Line } from "react-icons/ri";
 import { NumberCell } from "./NumberCell";
 import { ClickInput } from "./ClickInput";
-import { FeatureModal } from "./FeatureModal";
 import { conditions } from "../../model/data";
 import { showNotification } from "@mantine/notifications";
 import { Saves } from "./Saves";
 import { DiscriminatorComboBox } from "./DiscriminatorComboBox";
 import { DiscriminatorBadge } from "./Discriminator";
 import { ConditionDisplay } from "./ConditionDisplay";
-import { LuLockKeyhole, LuLockOpen } from "react-icons/lu";
+import { LuLockKeyhole, LuLockOpen, LuSword } from "react-icons/lu";
+import { ActionPopover } from "./ActionPopover";
+import { DeathSaveTracker } from "./DeathSaveTracker";
 
 export const InitiativeTracker = () => {
     const {
@@ -182,17 +183,37 @@ export const InitiativeTracker = () => {
                                     >
                                         <FaDiceD20 />
                                     </ActionIcon>
-                                    <FeatureModal
-                                        statBlock={combatant.statBlock!}
-                                    />
-                                    <ActionIcon
-                                        variant="outline"
-                                        onClick={() => deleteCombatant(id)}
-                                        style={{ marginLeft: "4px" }}
-                                        disabled={combatant.locked}
-                                    >
-                                        <RiSkullLine />
-                                    </ActionIcon>
+                                    {combatant.statBlock ? (
+                                        <ActionPopover
+                                            statBlock={combatant.statBlock}
+                                        />
+                                    ) : (
+                                        <ActionIcon
+                                            disabled={true}
+                                            style={{ marginLeft: "4px" }}
+                                        >
+                                            <LuSword />
+                                        </ActionIcon>
+                                    )}
+                                    {combatant.locked ? (
+                                        <DeathSaveTracker
+                                            deathSaves={combatant.deathSaves}
+                                            onChange={(deathSaves) =>
+                                                updateCombatant(id, {
+                                                    deathSaves,
+                                                })
+                                            }
+                                        />
+                                    ) : (
+                                        <ActionIcon
+                                            variant="outline"
+                                            onClick={() => deleteCombatant(id)}
+                                            style={{ marginLeft: "4px" }}
+                                            disabled={combatant.locked}
+                                        >
+                                            <RiDeleteBin2Line />
+                                        </ActionIcon>
+                                    )}
                                     <DiscriminatorComboBox
                                         onChange={(discriminator) =>
                                             updateCombatant(id, {

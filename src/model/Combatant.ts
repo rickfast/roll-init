@@ -10,6 +10,12 @@ export interface Combatant {
     statBlock?: StatBlock;
     discriminator?: Discriminator;
     locked?: boolean;
+    deathSaves: DeathSaves;
+}
+
+export interface DeathSaves {
+    death: number;
+    life: number;
 }
 
 export interface Discriminator {
@@ -26,5 +32,6 @@ export function fromStatBlock(statBlock: StatBlock): Combatant {
         ac: statBlock.armorClass,
         conditions: [],
         statBlock,
+        deathSaves: { death: 0, life: 0 },
     };
 }
