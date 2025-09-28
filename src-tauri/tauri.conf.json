@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "roll-initx",
+  "productName": "Roll Initiative",
   "version": "0.1.0",
   "identifier": "com.roll-initx.app",
   "build": {
@@ -12,9 +12,8 @@
   "app": {
     "windows": [
       {
-        "title": "roll-initx",
-        "width": 800,
-        "height": 600
+        "title": "Roll Initiative",
+        "maximized": true
       }
     ],
     "security": {

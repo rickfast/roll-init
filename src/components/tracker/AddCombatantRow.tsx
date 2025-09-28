@@ -84,6 +84,7 @@ export const AddCombatantRow = ({ onAddCombatant }: Props) => {
                             initiative: 0,
                             conditions: [],
                             discriminator: undefined,
+                            deathSaves: { death: 0, life: 0 },
                             // @ts-ignore
                             statBlock: bestiary[form.values.name] || {
                                 name: form.values.name,
