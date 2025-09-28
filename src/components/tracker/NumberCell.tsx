@@ -51,7 +51,7 @@ export const NumberCell = ({ initialValue, label, onChange }: Props) => {
         <Button.Group>
             <NumberPopover multiplier={-1} icon={<GoChevronDown />} />
             <Button.GroupSection
-                variant="default"
+                variant="gradient"
                 bg="var(--mantine-color-body)"
             >
                 <ClickInput

@@ -4,6 +4,7 @@ export interface Combatant {
     id: string;
     name: string;
     initiative: number;
+    initiativeBonus?: number;
     hp: number;
     ac: number;
     conditions: string[];
@@ -28,7 +29,11 @@ export function fromStatBlock(statBlock: StatBlock): Combatant {
         id: crypto.randomUUID(),
         name: statBlock.name,
         initiative: 0,
+        initiativeBonus: statBlock.dexterity
+            ? Math.floor((statBlock.dexterity - 10) / 2)
+            : 0,
         hp: statBlock.hitPoints.value,
+        max: statBlock.hitPoints.value,
         ac: statBlock.armorClass,
         conditions: [],
         statBlock,
