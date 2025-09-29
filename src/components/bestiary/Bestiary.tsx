@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Context } from "../../model/Context";
 import { Box, Grid, ScrollArea } from "@mantine/core";
 import { NavActionButton } from "../NavActionButton";
@@ -12,10 +12,15 @@ import { useScrollIntoView } from "@mantine/hooks";
 import { DataTable } from "../table/DataTable";
 
 export const Bestiary = () => {
+    const [previous, setPrevious] = useState<string | null>(null);
     const { bestiary, addCombatant } = useContext(Context);
     const [searchParams] = useSearchParams();
-    const selected = searchParams.get("id");
+    const selected = searchParams.get("id") || previous;
     const { scrollableRef } = useScrollIntoView();
+
+    useEffect(() => {
+        setPrevious(selected);
+    }, [selected]);
 
     return (
         <Box mx="auto">

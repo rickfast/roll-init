@@ -8,6 +8,13 @@ function roll20(): number {
     return Math.floor(Math.random() * 20) + 1;
 }
 
+const audio = new Audio("public/dice.mp3");
+
+function playDiceSound() {
+    audio.currentTime = 0;
+    audio.play();
+}
+
 export interface ViewModel {
     selected: number;
     sort: () => void;
@@ -43,6 +50,7 @@ export interface ViewModel {
     notifications: Set<string>;
     pushNotification: (notification: string) => void;
     searchable: Map<string, SearchData>;
+    longRest: () => void;
 }
 
 export type Type = "monster" | "spell";
@@ -300,16 +308,19 @@ export function useViewModel(initialData: SaveData): ViewModel {
     };
 
     const rollInitiative = (id: string) => {
-        const initiative = roll20();
+        const combatant = getCombatantById(id);
+        const initiative = roll20() + (combatant?.initiativeBonus || 0);
         setInitiative(id, initiative);
+
+        playDiceSound();
     };
 
     const rollAllInitiative = () => {
+        playDiceSound();
+
         const all: [string, Combatant][] = allCombatants().map(
             ([key, combatant]) => {
-                const initiative = combatant.locked
-                    ? combatant.initiative
-                    : roll20() + (combatant.statBlock?.initiativeBonus || 0);
+                const initiative = roll20() + (combatant.initiativeBonus || 0);
                 return [key, { ...combatant, initiative }];
             }
         );
@@ -349,6 +360,18 @@ export function useViewModel(initialData: SaveData): ViewModel {
     const getSelectedCombatant = () =>
         Array.from(combatants.values())[selected];
 
+    const longRest = () => {
+        const all: [string, Combatant][] = allCombatants().map(
+            ([key, combatant]) => {
+                const hp = combatant.locked ? combatant.max : combatant.hp;
+
+                return [key, { ...combatant, hp, conditions: [] }];
+            }
+        );
+
+        setCombatants(new Map(all));
+    };
+
     return {
         selected,
         sort,
@@ -381,5 +404,6 @@ export function useViewModel(initialData: SaveData): ViewModel {
         notifications,
         pushNotification,
         searchable,
+        longRest,
     };
 }

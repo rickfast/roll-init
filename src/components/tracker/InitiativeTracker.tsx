@@ -9,9 +9,11 @@ import {
     Table,
 } from "@mantine/core";
 import { AddCombatantRow } from "./AddCombatantRow";
-import { useContext } from "react";
+import { useContext, useState } from "react";
+import { StatBlockDisplay2 } from "../statblock/StatBlockDisplay2";
+import { StatBlock } from "../../model/StatBlock";
 import { Context } from "../../model/Context";
-import { PiPlayBold } from "react-icons/pi";
+import { PiCampfireDuotone, PiPlayBold } from "react-icons/pi";
 import { FaDiceD20, FaSearch, FaSortAmountDown } from "react-icons/fa";
 import { RiDeleteBin2Line } from "react-icons/ri";
 import { NumberCell } from "./NumberCell";
@@ -23,7 +25,6 @@ import { DiscriminatorComboBox } from "./DiscriminatorComboBox";
 import { DiscriminatorBadge } from "./Discriminator";
 import { ConditionDisplay } from "./ConditionDisplay";
 import { LuLockKeyhole, LuLockOpen, LuSword } from "react-icons/lu";
-import { ActionPopover } from "./ActionPopover";
 import { DeathSaveTracker } from "./DeathSaveTracker";
 
 export const InitiativeTracker = () => {
@@ -37,7 +38,12 @@ export const InitiativeTracker = () => {
         rollInitiative,
         rollAllInitiative,
         sort,
+        longRest,
     } = useContext(Context);
+
+    const [drawerOpened, setDrawerOpened] = useState(false);
+    const [selectedStatBlock, setSelectedStatBlock] =
+        useState<StatBlock | null>(null);
 
     return (
         <>
@@ -68,6 +74,24 @@ export const InitiativeTracker = () => {
                     onClick={sort}
                 >
                     Sort
+                </Button>
+            </Affix>
+            <Affix position={{ bottom: 80, right: 380 }}>
+                <Button
+                    variant="outline"
+                    rightSection={<PiCampfireDuotone />}
+                    onClick={() => {
+                        longRest();
+                        showNotification({
+                            title: "Long Rest",
+                            message:
+                                "All party members have been fully healed.",
+                            color: "green",
+                            autoClose: 3000,
+                        });
+                    }}
+                >
+                    Long Rest
                 </Button>
             </Affix>
             <Table layout="fixed">
@@ -123,6 +147,16 @@ export const InitiativeTracker = () => {
                                             updateCombatant(id, { hp })
                                         }
                                     />
+                                    {combatant.max !== undefined && (
+                                        <div
+                                            style={{
+                                                fontSize: "0.75em",
+                                                color: "#888",
+                                            }}
+                                        >
+                                            {combatant.hp} / {combatant.max}
+                                        </div>
+                                    )}
                                 </Table.Td>
                                 <Table.Td colSpan={1}>
                                     <ClickInput
@@ -139,6 +173,19 @@ export const InitiativeTracker = () => {
                                             updateCombatant(id, { initiative })
                                         }
                                     />
+                                    {combatant.initiativeBonus !==
+                                        undefined && (
+                                        <div
+                                            style={{
+                                                fontSize: "0.75em",
+                                                color: "#888",
+                                            }}
+                                        >
+                                            {combatant.initiativeBonus >= 0
+                                                ? `+${combatant.initiativeBonus}`
+                                                : combatant.initiativeBonus}
+                                        </div>
+                                    )}
                                 </Table.Td>
                                 <Table.Td colSpan={3}>
                                     <MultiSelect
@@ -183,18 +230,21 @@ export const InitiativeTracker = () => {
                                     >
                                         <FaDiceD20 />
                                     </ActionIcon>
-                                    {combatant.statBlock ? (
-                                        <ActionPopover
-                                            statBlock={combatant.statBlock}
-                                        />
-                                    ) : (
-                                        <ActionIcon
-                                            disabled={true}
-                                            style={{ marginLeft: "4px" }}
-                                        >
-                                            <LuSword />
-                                        </ActionIcon>
-                                    )}
+                                    <ActionIcon
+                                        variant="outline"
+                                        disabled={!combatant.statBlock}
+                                        style={{ marginLeft: "4px" }}
+                                        onClick={() => {
+                                            if (combatant.statBlock) {
+                                                setSelectedStatBlock(
+                                                    combatant.statBlock
+                                                );
+                                                setDrawerOpened(true);
+                                            }
+                                        }}
+                                    >
+                                        <LuSword />
+                                    </ActionIcon>
                                     {combatant.locked ? (
                                         <DeathSaveTracker
                                             deathSaves={combatant.deathSaves}
@@ -260,11 +310,17 @@ export const InitiativeTracker = () => {
                 </Table.Tbody>
             </Table>
             <Drawer
-                opened={false}
-                onClose={() => {}}
-                title="Stat Block"
+                opened={drawerOpened}
+                onClose={() => setDrawerOpened(false)}
+                position="right"
                 size="xl"
-            ></Drawer>
+                padding="md"
+                overlayProps={{ backgroundOpacity: 0.5 }}
+            >
+                {selectedStatBlock && (
+                    <StatBlockDisplay2 statBlock={selectedStatBlock} />
+                )}
+            </Drawer>
         </>
     );
 };
