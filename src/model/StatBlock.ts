@@ -72,20 +72,19 @@ export type Type = "recharge" | "perDay" | "perRest";
 // }
 
 export type DamageType =
-    | "acid"
-    | "bludgeoning"
-    | "cold"
-    | "fire"
-    | "force"
-    | "lightning"
-    | "necrotic"
-    | "piercing"
-    | "poison"
-    | "psychic"
-    | "radiant"
-    | "slashing"
-    | "thunder";
-// export type DamageType = "cold" | "acid" | "lightning" | "fire" | "poison" | "thunder" | "psychic" | "necrotic" | "slashing" | "radiant" | "bludgeoning" | "piercing"
+    | "Acid"
+    | "Bludgeoning"
+    | "Cold"
+    | "Fire"
+    | "Force"
+    | "Lightning"
+    | "Necrotic"
+    | "Piercing"
+    | "Poison"
+    | "Psychic"
+    | "Radiant"
+    | "Slashing"
+    | "Thunder";
 
 export interface HitPointsObject {
     value: number;
