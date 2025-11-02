@@ -1,0 +1,79 @@
+name: Build Tauri Installers
+
+on:
+    push:
+        branches: [main]
+    workflow_dispatch:
+
+jobs:
+    build:
+        name: Build Installers (${{ matrix.os }})
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - os: macos-latest
+                      target: universal-apple-darwin
+                    - os: windows-latest
+                      target: x86_64-pc-windows-msvc
+        runs-on: ${{ matrix.os }}
+
+        env:
+            npm_config_force: true
+            TAURI_BUILD_TYPE: release
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+                  cache: "npm"
+
+            - name: Install Rust toolchain
+              uses: dtolnay/rust-toolchain@stable
+
+            - name: Cache cargo
+              uses: actions/cache@v4
+              with:
+                  path: |
+                      ~/.cargo/registry
+                      ~/.cargo/git
+                      src-tauri/target
+                  key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-cargo-
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Build Tauri App
+              run: npx tauri build
+
+            - name: Collect Artifacts (macOS)
+              if: matrix.os == 'macos-latest'
+              run: |
+                  ls -R src-tauri/target/release/bundle
+
+            - name: Upload macOS Artifacts
+              if: matrix.os == 'macos-latest'
+              uses: actions/upload-artifact@v4
+              with:
+                  name: tauri-macos-bundle
+                  path: |
+                      src-tauri/target/release/bundle/**/*.dmg
+                      src-tauri/target/release/bundle/**/*.app
+                      src-tauri/target/release/bundle/**/*.tar.gz
+                      src-tauri/target/release/bundle/**/*.zip
+
+            - name: Upload Windows Artifacts
+              if: matrix.os == 'windows-latest'
+              uses: actions/upload-artifact@v4
+              with:
+                  name: tauri-windows-bundle
+                  path: |
+                      src-tauri/target/release/bundle/**/*.msi
+                      src-tauri/target/release/bundle/**/*.exe
+                      src-tauri/target/release/bundle/**/*.zip
