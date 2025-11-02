@@ -6,6 +6,7 @@ export interface Combatant {
     initiative: number;
     initiativeBonus?: number;
     hp: number;
+    max: number;
     ac: number;
     conditions: string[];
     statBlock?: StatBlock;

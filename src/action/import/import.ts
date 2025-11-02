@@ -24,6 +24,25 @@ function evaluate(token: string, value: string) {
             return `Roll: ${modifier(value)}`;
         case "h":
             return "Hit: ";
+        case "actSave":
+            switch (value) {
+                case "str":
+                    return `<i>Strength Saving Throw: </i>`;
+                case "dex":
+                    return `<i>Dexterity Saving Throw: </i>`;
+                case "con":
+                    return `<i>Constitution Saving Throw: </i>`;
+                case "int":
+                    return `<i>Intelligence Saving Throw: </i>`;
+                case "wis":
+                    return `<i>Wisdom Saving Throw: </i>`;
+                case "cha":
+                    return `<i>Charisma Saving Throw: </i>`;
+                default:
+                    return `<i>Constitution Saving Throw: </i>`;
+            }
+        case "dc":
+            return `DC ${value} `;
         case "spell":
         case "status":
         case "condition":

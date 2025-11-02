@@ -12,11 +12,9 @@ import {
     SimpleGrid,
     ThemeIcon,
 } from "@mantine/core";
-import {
-    GiShield as IconShield,
-    GiHeartArmor as IconHeart,
-    GiLightningArc as IconBolt,
-} from "react-icons/gi";
+import { PiShieldCheckeredFill as IconShield } from "react-icons/pi";
+import { TbHealthRecognition as IconHeart } from "react-icons/tb";
+import { TbBrandSpeedtest as IconSpeed } from "react-icons/tb";
 import { StatBlock } from "../../model/StatBlock";
 import { formatModifier, getModifier } from "../../util";
 
@@ -142,7 +140,7 @@ export const StatBlockDisplay2 = ({
                         </Flex>
                         <Flex align="center" gap="xs">
                             <ThemeIcon size={24} color="blue" variant="light">
-                                <IconBolt size={16} />
+                                <IconSpeed size={16} />
                             </ThemeIcon>
                             <Box>
                                 <Text size="xs" c="dimmed">
@@ -296,7 +294,13 @@ export const StatBlockDisplay2 = ({
                                         <Text fw={600} span>
                                             {action.name}.{" "}
                                         </Text>
-                                        <Text span>{action.desc}</Text>
+                                        <Text span>
+                                            <span
+                                                dangerouslySetInnerHTML={{
+                                                    __html: action.desc,
+                                                }}
+                                            />
+                                        </Text>
                                     </Box>
                                 ))}
                             </Stack>

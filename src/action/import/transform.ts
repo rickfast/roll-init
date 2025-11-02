@@ -1,5 +1,11 @@
-import { DamageType, Language, StatBlock } from "../../model/StatBlock";
 import {
+    DamageType,
+    Feature,
+    Language,
+    StatBlock,
+} from "../../model/StatBlock";
+import {
+    ActionElement,
     Alignment,
     ConditionI,
     ConditionImmuneClass,
@@ -48,16 +54,34 @@ function mapType(type: PurpleType | TypeElement): string {
         return "Unknown";
     }
     if (typeof type === "string") {
-        return type;
+        return toTitleCase(type);
     } else if (type.type) {
         if (typeof type.type === "string") {
-            return type.type;
+            return toTitleCase(type.type);
         } else if (type.type.hasOwnProperty("choose")) {
-            return (type.type as FluffyType).choose[0];
+            return toTitleCase((type.type as FluffyType).choose[0]);
         }
     }
 
     throw new Error(`Unexpected type format: ${JSON.stringify(type)}`);
+}
+
+function toTitleCase(str: string): string {
+    try {
+        if (!str) {
+            return "";
+        }
+        return str
+            .toLowerCase()
+            .split(" ")
+            .map(function (word) {
+                return word.charAt(0).toUpperCase() + word.slice(1);
+            })
+            .join(" ");
+    } catch (error) {
+        console.error("Error in toTitleCase:", error);
+        return str;
+    }
 }
 
 function mapAlignment(alignment: Alignment[]): string {
@@ -104,13 +128,13 @@ function mapDamageResistances(
 ): DamageType[] {
     return resistances
         .filter((r) => typeof r === "string")
-        .map((r) => r as DamageType);
+        .map((r) => toTitleCase(r) as DamageType);
 }
 
 function mapImmunities(immunities: Immune[]): DamageType[] {
     return immunities
         .filter((i) => typeof i === "string")
-        .map((i) => i as DamageType);
+        .map((i) => toTitleCase(i) as DamageType);
 }
 
 function mapConditionImmunities(
@@ -118,7 +142,7 @@ function mapConditionImmunities(
 ): string[] {
     return conditionImmune.flatMap((c) => {
         if (typeof c === "string") {
-            return [c as DamageType];
+            return [toTitleCase(c) as DamageType];
         } else if (
             typeof c === "object" &&
             c.hasOwnProperty("conditionImmune")
@@ -134,9 +158,9 @@ function mapDamageVulnerabilities(
 ): DamageType[] {
     return vulnerable.flatMap((v) => {
         if (typeof v === "string") {
-            return [v as DamageType];
+            return [toTitleCase(v) as DamageType];
         } else if (typeof v === "object" && v.hasOwnProperty("vulnerable")) {
-            return v.vulnerable;
+            return v.vulnerable.toString() as DamageType;
         }
         return [];
     });
@@ -145,9 +169,12 @@ function mapDamageVulnerabilities(
 function mapSpeed(speed: Speed): StatBlockSpeed[] {
     return Object.entries(speed).map(([type, value]) => {
         return {
-            type: type,
+            type: toTitleCase(type),
             // @ts-ignore
-            speed: typeof value === "number" ? value : value.climb || "0",
+            speed:
+                typeof value === "number"
+                    ? `${value} ft.`
+                    : value.climb || "0 ft.",
         } as StatBlockSpeed;
     });
 }
@@ -209,7 +236,6 @@ export function transform(monster: Monster): StatBlock {
             : [],
         skill: {},
         passive: 10,
-
         languages: (monster.languages as Language[]) || [],
         spellcasting: undefined,
         // @ts-ignore
@@ -221,40 +247,47 @@ export function transform(monster: Monster): StatBlock {
             : [],
         // @ts-ignore
         actions: monster.action
-            ? monster.action.map((action) => ({
-                  name: action.name,
-                  desc: action.entries ? action.entries.join(" ") : "",
-              }))
+            ? monster.action.map((action) => transformAction(action))
             : [],
+        legendaryActions: monster.legendary
+            ? monster.legendary.map((legendary) => transformAction(legendary))
+            : [],
+        reactions: monster.reaction
+            ? monster.reaction.map((reaction) => transformAction(reaction))
+            : [],
+        source: "Unknown",
     };
 
-    // if (monster.spellcasting) {
-    //     for (const spell of monster.spellcasting) {
-    //         const spellcastingEntry = {
-    //             name: spell.name,
-    //             level: spell.level,
-    //             spells: spell.spells,
-    //             saveDC: spell.saveDC,
-    //             attackBonus: spell.attackBonus,
-    //         };
-    //         statBlock.spellcasting.push(spellcastingEntry);
-    //     }
-    // }
-
-    // if (monster.action) {
-    //     for (const action of monster.action) {
-    //         const actionEntry = {
-    //             name: action.name,
-    //             type: action.type,
-    //             description: action.description,
-    //         };
-    //         statBlock.actions.push(actionEntry);
-    //     }
-    // }
-
-    // Add other properties similarly...
-
     return statBlock;
+}
+
+function transformAction(actionElement: ActionElement): Feature {
+    return {
+        name: actionElement.name,
+        desc: actionElement.entries
+            .map((entry) => {
+                if (typeof entry === "string") {
+                    return entry;
+                } else if (entry.type === "list" && entry.items) {
+                    return entry.items
+                        .map(
+                            (item) =>
+                                `<b>${item.name}</b>: ` +
+                                (typeof item === "string"
+                                    ? item
+                                    : item.entry
+                                      ? item.entry
+                                      : item.entries
+                                        ? item.entries.join(" ")
+                                        : "")
+                        )
+                        .join("</br>");
+                } else {
+                    return "";
+                }
+            })
+            .join("</br>"),
+    };
 }
 
 export function transformSpell(spell: Spell5e): Spell {
