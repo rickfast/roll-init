@@ -31,6 +31,8 @@ import { Header } from "./components/Header";
 import { Notifications } from "@mantine/notifications";
 import { RingLoader } from "./components/RingLoader";
 import { Spells } from "./components/spells/Spells";
+import { CriticalTables } from "./components/crittables/CriticalTables";
+import { GiDiceFire } from "react-icons/gi";
 
 const theme = createTheme({
     components: {
@@ -99,6 +101,12 @@ export default function App() {
                                 icon={<GiBoltSpellCast />}
                             />
                             <NavLink
+                                label="Crit Tables"
+                                href="/crittables"
+                                key="Crit Tables"
+                                icon={<GiDiceFire />}
+                            />
+                            <NavLink
                                 label="Import Bestiary"
                                 href="/import"
                                 key="Import Bestiary"
@@ -138,6 +146,10 @@ export default function App() {
                                     }
                                 />
                                 <Route path="/spells" element={<Spells />} />
+                                <Route
+                                    path="/crittables"
+                                    element={<CriticalTables />}
+                                />
                             </Routes>
                         </AppShell.Main>
                     </AppShell>
