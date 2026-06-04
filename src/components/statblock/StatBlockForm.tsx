@@ -22,6 +22,9 @@ import { generateStatBlock } from "../../action/ai/generateStatBlock";
 import { Context } from "../../model/Context";
 import { useSearchParams } from "react-router";
 import { showNotification } from "@mantine/notifications";
+import { PiSparkleDuotone, PiFloppyDiskBold } from "react-icons/pi";
+import { FaEdit } from "react-icons/fa";
+import "../forms.css";
 
 const sizeOptions = ["Tiny", "Small", "Medium", "Large", "Huge", "Gargantuan"];
 const damageTypes = [
@@ -233,9 +236,22 @@ export function StatBlockForm({ aiEnabled = true }: Props) {
             <form onSubmit={form.onSubmit(handleSubmit)}>
                 <Grid>
                     <Grid.Col span={6}>
-                        <Stack gap={"md"}>
+                        <div className="page-head">
+                            <h1 className="page-title">
+                                {aiEnabled
+                                    ? "Stat Block Generator"
+                                    : "Stat Block Editor"}
+                            </h1>
+                            <div className="page-subtitle">
+                                {aiEnabled
+                                    ? "Name a creature and conjure it with AI, or craft it by hand."
+                                    : "Forge a creature stat block by hand."}
+                            </div>
+                        </div>
+                        <Stack gap={"md"} className="form-panel">
                             <TextInput
                                 label="Name"
+                                variant="filled"
                                 {...form.getInputProps("name")}
                                 required
                             />
@@ -464,7 +480,7 @@ export function StatBlockForm({ aiEnabled = true }: Props) {
 
                                     <Divider label="Traits" />
                                     {traits.map((trait, i) => (
-                                        <Card key={i} withBorder>
+                                        <Card key={i} className="form-entry-card">
                                             <Group>
                                                 <TextInput
                                                     label="Name"
@@ -508,7 +524,7 @@ export function StatBlockForm({ aiEnabled = true }: Props) {
 
                                     <Divider label="Actions" />
                                     {actions.map((action, i) => (
-                                        <Card key={i} withBorder>
+                                        <Card key={i} className="form-entry-card">
                                             <Group>
                                                 <TextInput
                                                     label="Name"
@@ -555,38 +571,54 @@ export function StatBlockForm({ aiEnabled = true }: Props) {
                                     <Divider />
                                 </>
                             )}
-                            <Button
-                                type="submit"
-                                onClick={() => {
-                                    addMonster(form.values);
-                                    showNotification({
-                                        title: "Monster Added",
-                                        message: `${form.values.name} has been added to the bestiary.`,
-                                        color: "green",
-                                        autoClose: 3000,
-                                    });
-                                }}
-                                disabled={!form.isValid()}
-                            >
-                                Save Stat Block
-                            </Button>
-                            {aiEnabled && (
-                                <Button
-                                    loading={aiLoading}
-                                    onClick={generate}
-                                    disabled={
-                                        !form.values.name &&
-                                        !form.values.challengeRating
-                                    }
-                                >
-                                    Generate with AI
-                                </Button>
-                            )}
-                            {aiEnabled && (
-                                <Button onClick={() => setEdit(!edit)}>
-                                    Edit Stat Block
-                                </Button>
-                            )}
+                            <div className="form-actions">
+                                {aiEnabled && (
+                                    <Button
+                                        loading={aiLoading}
+                                        onClick={generate}
+                                        variant="gradient"
+                                        gradient={{
+                                            from: "orange",
+                                            to: "red",
+                                            deg: 45,
+                                        }}
+                                        leftSection={<PiSparkleDuotone />}
+                                        disabled={
+                                            !form.values.name &&
+                                            !form.values.challengeRating
+                                        }
+                                    >
+                                        Generate with AI
+                                    </Button>
+                                )}
+                                <Group grow>
+                                    <Button
+                                        type="submit"
+                                        leftSection={<PiFloppyDiskBold />}
+                                        onClick={() => {
+                                            addMonster(form.values);
+                                            showNotification({
+                                                title: "Monster Added",
+                                                message: `${form.values.name} has been added to the bestiary.`,
+                                                color: "green",
+                                                autoClose: 3000,
+                                            });
+                                        }}
+                                        disabled={!form.isValid()}
+                                    >
+                                        Save Stat Block
+                                    </Button>
+                                    {aiEnabled && (
+                                        <Button
+                                            variant="default"
+                                            leftSection={<FaEdit />}
+                                            onClick={() => setEdit(!edit)}
+                                        >
+                                            {edit ? "Hide Editor" : "Edit Manually"}
+                                        </Button>
+                                    )}
+                                </Group>
+                            </div>
                         </Stack>
                     </Grid.Col>
                     <Grid.Col span={6}>
