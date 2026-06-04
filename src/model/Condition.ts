@@ -3,6 +3,10 @@ interface Conditions {
         name: string;
         effects: string[];
     }>;
+    statusEffects: Array<{
+        name: string;
+        effects: string[];
+    }>;
     statuses: Array<{
         name: string;
         effects?: string[];
@@ -124,6 +128,116 @@ const conditions: Conditions = {
             ],
         },
     ],
+    statusEffects: [
+        {
+            name: "Bless",
+            effects: [
+                "The creature adds 1d4 to each attack roll and saving throw it makes.",
+                "Concentration, up to 1 minute.",
+            ],
+        },
+        {
+            name: "Bane",
+            effects: [
+                "The creature subtracts 1d4 from each attack roll and saving throw it makes.",
+                "Concentration, up to 1 minute.",
+            ],
+        },
+        {
+            name: "Bardic Inspiration",
+            effects: [
+                "The creature has a Bardic Inspiration die it can add to one ability check, attack roll, or saving throw.",
+                "It can wait until after it rolls the d20 before deciding to use the die, but must decide before the DM says whether the roll succeeds or fails.",
+            ],
+        },
+        {
+            name: "Guidance",
+            effects: [
+                "The creature can add 1d4 to one ability check of its choice before the spell ends.",
+                "Concentration, up to 1 minute.",
+            ],
+        },
+        {
+            name: "Heroism",
+            effects: [
+                "The creature is immune to being Frightened.",
+                "At the start of each of its turns, it gains temporary hit points equal to the caster's spellcasting ability modifier.",
+                "Concentration, up to 1 minute.",
+            ],
+        },
+        {
+            name: "Hex",
+            effects: [
+                "The creature takes an extra 1d6 necrotic damage whenever the caster hits it with an attack.",
+                "It has disadvantage on ability checks made with the ability chosen by the caster.",
+                "Concentration, up to 1 hour.",
+            ],
+        },
+        {
+            name: "Hunter's Mark",
+            effects: [
+                "The creature takes an extra 1d6 damage whenever the caster hits it with a weapon attack.",
+                "The caster has advantage on Wisdom (Perception) and Wisdom (Survival) checks to find it.",
+                "Concentration, up to 1 hour.",
+            ],
+        },
+        {
+            name: "Hexblade's Curse",
+            effects: [
+                "The caster deals bonus damage to the cursed target equal to the caster's proficiency bonus.",
+                "The caster scores a critical hit against the target on a roll of 19 or 20.",
+                "If the target dies, the caster regains hit points.",
+            ],
+        },
+        {
+            name: "Faerie Fire",
+            effects: [
+                "The creature is outlined in light and sheds dim light; it can't benefit from being Invisible.",
+                "Attack rolls against the creature have advantage.",
+                "Concentration, up to 1 minute.",
+            ],
+        },
+        {
+            name: "Hasted",
+            effects: [
+                "The creature's speed is doubled and it gains a +2 bonus to AC.",
+                "It has advantage on Dexterity saving throws.",
+                "It gains an additional action used to Attack (one weapon attack only), Dash, Disengage, Hide, or Use an Object.",
+                "When the spell ends, the creature can't move or take actions until after its next turn.",
+                "Concentration, up to 1 minute.",
+            ],
+        },
+        {
+            name: "Slowed",
+            effects: [
+                "The creature's speed is halved and it takes a -2 penalty to AC and Dexterity saving throws.",
+                "It can't take reactions.",
+                "It can use either an action or a bonus action on its turn, not both, and can make only one melee or ranged attack on its turn.",
+                "Concentration, up to 1 minute.",
+            ],
+        },
+        {
+            name: "Shield of Faith",
+            effects: [
+                "The creature has a +2 bonus to AC.",
+                "Concentration, up to 10 minutes.",
+            ],
+        },
+        {
+            name: "Aid",
+            effects: [
+                "The creature's hit point maximum and current hit points are increased for the duration.",
+            ],
+        },
+        {
+            name: "Raging",
+            effects: [
+                "The creature has advantage on Strength checks and Strength saving throws.",
+                "It deals bonus melee damage with Strength-based attacks.",
+                "It has resistance to bludgeoning, piercing, and slashing damage.",
+            ],
+        },
+    ],
     statuses: [
         {
             name: "Concentration",
@@ -152,6 +266,12 @@ const conditions: Conditions = {
 const allConditions: Array<string[]> = conditions.conditions
     .map((condition) => [condition.name, condition.effects.join(" ")])
     .concat(
+        conditions.statusEffects.map((status) => [
+            status.name,
+            status.effects.join(" "),
+        ])
+    )
+    .concat(
         conditions.statuses.map((status) => [
             status.name,
             status.effects?.join(" ") ?? "",
@@ -161,3 +281,19 @@ const allConditions: Array<string[]> = conditions.conditions
 export const conditionMapping = new Map<string, string>(
     allConditions.map(([name, effects]) => [name, effects])
 );
+
+// Grouped options for the tracker's condition MultiSelect.
+export const conditionOptions = [
+    {
+        group: "Conditions",
+        items: conditions.conditions.map((condition) => condition.name),
+    },
+    {
+        group: "Status Effects",
+        items: conditions.statusEffects.map((status) => status.name),
+    },
+    {
+        group: "Other",
+        items: conditions.statuses.map((status) => status.name),
+    },
+];

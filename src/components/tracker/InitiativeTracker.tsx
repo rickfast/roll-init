@@ -1,9 +1,10 @@
 import { Combatant } from "../../model/Combatant";
 import {
     ActionIcon,
-    Affix,
+    AppShell,
     Button,
     Drawer,
+    Group,
     MultiSelect,
     Popover,
     Table,
@@ -18,7 +19,7 @@ import { FaDiceD20, FaSearch, FaSortAmountDown } from "react-icons/fa";
 import { RiDeleteBin2Line } from "react-icons/ri";
 import { NumberCell } from "./NumberCell";
 import { ClickInput } from "./ClickInput";
-import { conditions } from "../../model/data";
+import { conditionOptions } from "../../model/Condition";
 import { showNotification } from "@mantine/notifications";
 import { Saves } from "./Saves";
 import { DiscriminatorComboBox } from "./DiscriminatorComboBox";
@@ -47,53 +48,6 @@ export const InitiativeTracker = () => {
 
     return (
         <>
-            <Affix position={{ bottom: 70, right: 40 }}>
-                <ActionIcon
-                    radius="xl"
-                    size={60}
-                    onClick={() => {
-                        next();
-                    }}
-                >
-                    <PiPlayBold />
-                </ActionIcon>
-            </Affix>
-            <Affix position={{ bottom: 80, right: 120 }}>
-                <Button
-                    variant="outline"
-                    rightSection={<FaDiceD20 />}
-                    onClick={rollAllInitiative}
-                >
-                    Roll Initiative
-                </Button>
-            </Affix>
-            <Affix position={{ bottom: 80, right: 280 }}>
-                <Button
-                    variant="outline"
-                    rightSection={<FaSortAmountDown />}
-                    onClick={sort}
-                >
-                    Sort
-                </Button>
-            </Affix>
-            <Affix position={{ bottom: 80, right: 380 }}>
-                <Button
-                    variant="outline"
-                    rightSection={<PiCampfireDuotone />}
-                    onClick={() => {
-                        longRest();
-                        showNotification({
-                            title: "Long Rest",
-                            message:
-                                "All party members have been fully healed.",
-                            color: "green",
-                            autoClose: 3000,
-                        });
-                    }}
-                >
-                    Long Rest
-                </Button>
-            </Affix>
             <Table layout="fixed">
                 <Table.Thead>
                     <Table.Tr>
@@ -143,8 +97,13 @@ export const InitiativeTracker = () => {
                                     <NumberCell
                                         initialValue={combatant.hp}
                                         label="HP"
+                                        max={combatant.max}
+                                        tempValue={combatant.tempHp}
                                         onChange={(hp) =>
                                             updateCombatant(id, { hp })
+                                        }
+                                        onChangeTemp={(tempHp) =>
+                                            updateCombatant(id, { tempHp })
                                         }
                                     />
                                     {combatant.max !== undefined && (
@@ -155,6 +114,16 @@ export const InitiativeTracker = () => {
                                             }}
                                         >
                                             {combatant.hp} / {combatant.max}
+                                            {combatant.tempHp ? (
+                                                <span
+                                                    style={{
+                                                        color: "#4dabf7",
+                                                        marginLeft: 4,
+                                                    }}
+                                                >
+                                                    +{combatant.tempHp} temp
+                                                </span>
+                                            ) : null}
                                         </div>
                                     )}
                                 </Table.Td>
@@ -189,7 +158,8 @@ export const InitiativeTracker = () => {
                                 </Table.Td>
                                 <Table.Td colSpan={3}>
                                     <MultiSelect
-                                        data={conditions}
+                                        data={conditionOptions}
+                                        searchable
                                         value={combatant.conditions}
                                         leftSection={
                                             combatant.conditions?.length >
@@ -309,6 +279,49 @@ export const InitiativeTracker = () => {
                     />
                 </Table.Tbody>
             </Table>
+            <AppShell.Footer p="xs">
+                <Group justify="flex-end" gap="sm" h="100%">
+                    <Button
+                        variant="outline"
+                        rightSection={<PiCampfireDuotone />}
+                        onClick={() => {
+                            longRest();
+                            showNotification({
+                                title: "Long Rest",
+                                message:
+                                    "All party members have been fully healed.",
+                                color: "green",
+                                autoClose: 3000,
+                            });
+                        }}
+                    >
+                        Long Rest
+                    </Button>
+                    <Button
+                        variant="outline"
+                        rightSection={<FaSortAmountDown />}
+                        onClick={sort}
+                    >
+                        Sort
+                    </Button>
+                    <Button
+                        variant="outline"
+                        rightSection={<FaDiceD20 />}
+                        onClick={rollAllInitiative}
+                    >
+                        Roll Initiative
+                    </Button>
+                    <ActionIcon
+                        radius="xl"
+                        size={42}
+                        onClick={() => {
+                            next();
+                        }}
+                    >
+                        <PiPlayBold />
+                    </ActionIcon>
+                </Group>
+            </AppShell.Footer>
             <Drawer
                 opened={drawerOpened}
                 onClose={() => setDrawerOpened(false)}
