@@ -1,0 +1,269 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&display=swap");
+
+.tracker-root {
+    /* Arcane war-table palette */
+    --tr-surface: #1d1e23;
+    --tr-surface-hover: #25262c;
+    --tr-border: rgba(255, 255, 255, 0.07);
+    --tr-border-strong: rgba(255, 255, 255, 0.16);
+    --tr-ember: #f0883e;
+    --tr-ember-deep: #e8702a;
+    --tr-ember-soft: rgba(240, 136, 62, 0.13);
+    --tr-text: #e9eaec;
+    --tr-text-dim: #8a8d95;
+    --tr-hp-good: #51cf66;
+    --tr-hp-warn: #fcc419;
+    --tr-hp-bad: #fa5252;
+    --tr-temp: #4dabf7;
+
+    /* shared column rhythm for header + cards */
+    --tr-cols: 60px minmax(150px, 1.25fr) 234px 70px minmax(168px, 1.35fr)
+        max-content;
+
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    padding-bottom: 16px;
+}
+
+/* ---------- header row ---------- */
+.tracker-head {
+    display: grid;
+    grid-template-columns: var(--tr-cols);
+    align-items: center;
+    gap: 16px;
+    padding: 4px 20px 6px;
+}
+.tracker-head span {
+    font-family: "Cinzel", Georgia, serif;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--tr-text-dim);
+}
+.tracker-head .col-center {
+    text-align: center;
+}
+
+/* ---------- combatant card ---------- */
+.combatant-card {
+    display: grid;
+    grid-template-columns: var(--tr-cols);
+    align-items: center;
+    gap: 16px;
+    background: var(--tr-surface);
+    border: 1px solid var(--tr-border);
+    border-left: 3px solid transparent;
+    border-radius: 11px;
+    padding: 11px 18px;
+    transition: background 0.16s ease, border-color 0.16s ease,
+        box-shadow 0.16s ease, transform 0.16s ease;
+}
+.combatant-card:hover {
+    background: var(--tr-surface-hover);
+    border-color: var(--tr-border-strong);
+}
+.combatant-card[data-active="true"] {
+    border-left-color: var(--tr-ember);
+    background: linear-gradient(
+        90deg,
+        var(--tr-ember-soft),
+        var(--tr-surface) 42%
+    );
+    box-shadow: 0 0 0 1px rgba(240, 136, 62, 0.22),
+        0 8px 28px -10px rgba(240, 136, 62, 0.4);
+}
+.combatant-card[data-downed="true"] {
+    opacity: 0.62;
+    filter: saturate(0.5);
+}
+
+/* ---------- initiative badge ---------- */
+.init-badge {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    background: radial-gradient(circle at 32% 26%, #2e3036, #161719);
+    border: 2px solid var(--tr-border-strong);
+    transition: border-color 0.16s ease, box-shadow 0.16s ease;
+    user-select: none;
+}
+.init-badge:hover {
+    border-color: var(--tr-ember);
+}
+.combatant-card[data-active="true"] .init-badge {
+    border-color: var(--tr-ember);
+    box-shadow: 0 0 16px -2px rgba(240, 136, 62, 0.7),
+        inset 0 0 12px rgba(240, 136, 62, 0.16);
+}
+.init-badge .init-value {
+    font-family: "Cinzel", Georgia, serif;
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--tr-text);
+}
+.init-badge .init-bonus {
+    font-size: 9.5px;
+    color: var(--tr-text-dim);
+    margin-top: 3px;
+    letter-spacing: 0.5px;
+}
+.combatant-card[data-active="true"] .init-value {
+    color: var(--tr-ember);
+}
+
+/* ---------- name block ---------- */
+.combatant-id {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+.combatant-name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+.combatant-name {
+    font-family: "Cinzel", Georgia, serif;
+    font-size: 15.5px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    color: var(--tr-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.combatant-saves {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+/* ---------- hp ---------- */
+.hp-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+.hp-bar {
+    position: relative;
+    height: 22px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--tr-border);
+    overflow: hidden;
+}
+.hp-bar-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    border-radius: 5px 0 0 5px;
+    transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        background 0.35s ease;
+}
+.hp-bar-temp {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background-image: repeating-linear-gradient(
+        -45deg,
+        rgba(77, 171, 247, 0.85) 0,
+        rgba(77, 171, 247, 0.85) 5px,
+        rgba(77, 171, 247, 0.55) 5px,
+        rgba(77, 171, 247, 0.55) 10px
+    );
+}
+.hp-bar-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+    pointer-events: none;
+}
+.hp-bar-label .temp-tag {
+    color: #d0eaff;
+}
+.hp-controls {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}
+
+/* ---------- ac shield ---------- */
+.ac-cell {
+    position: relative;
+    width: 54px;
+    height: 58px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--tr-text-dim);
+}
+.ac-cell .ac-glyph {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.32;
+}
+.ac-cell .ac-value {
+    position: relative;
+    font-family: "Cinzel", Georgia, serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--tr-text);
+    padding-top: 3px;
+}
+
+/* ---------- actions ---------- */
+.combatant-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.combatant-actions .action-divider {
+    width: 1px;
+    align-self: stretch;
+    margin: 4px 2px;
+    background: var(--tr-border);
+}
+
+/* ---------- add row ---------- */
+.add-card {
+    display: grid;
+    grid-template-columns: 1fr 96px 92px 92px max-content;
+    gap: 12px;
+    align-items: center;
+    background: transparent;
+    border: 1px dashed var(--tr-border-strong);
+    border-radius: 11px;
+    padding: 12px 18px;
+    transition: border-color 0.16s ease, background 0.16s ease;
+}
+.add-card:focus-within,
+.add-card:hover {
+    border-color: var(--tr-ember);
+    background: var(--tr-ember-soft);
+}
+
+/* let the conditions dropdown sit above neighbouring cards */
+.combatant-card .mantine-MultiSelect-root {
+    width: 100%;
+}

@@ -1,31 +1,15 @@
 import { Combatant } from "../../model/Combatant";
-import {
-    ActionIcon,
-    Affix,
-    Button,
-    Drawer,
-    MultiSelect,
-    Popover,
-    Table,
-} from "@mantine/core";
+import { ActionIcon, AppShell, Button, Drawer, Group, Tooltip } from "@mantine/core";
 import { AddCombatantRow } from "./AddCombatantRow";
 import { useContext, useState } from "react";
 import { StatBlockDisplay2 } from "../statblock/StatBlockDisplay2";
 import { StatBlock } from "../../model/StatBlock";
 import { Context } from "../../model/Context";
-import { PiCampfireDuotone, PiPlayBold } from "react-icons/pi";
-import { FaDiceD20, FaSearch, FaSortAmountDown } from "react-icons/fa";
-import { RiDeleteBin2Line } from "react-icons/ri";
-import { NumberCell } from "./NumberCell";
-import { ClickInput } from "./ClickInput";
-import { conditions } from "../../model/data";
+import { PiCampfireDuotone, PiPlayBold, PiSwordBold } from "react-icons/pi";
+import { FaDiceD20, FaSortAmountDown } from "react-icons/fa";
 import { showNotification } from "@mantine/notifications";
-import { Saves } from "./Saves";
-import { DiscriminatorComboBox } from "./DiscriminatorComboBox";
-import { DiscriminatorBadge } from "./Discriminator";
-import { ConditionDisplay } from "./ConditionDisplay";
-import { LuLockKeyhole, LuLockOpen, LuSword } from "react-icons/lu";
-import { DeathSaveTracker } from "./DeathSaveTracker";
+import { CombatantCard } from "./CombatantCard";
+import "./tracker.css";
 
 export const InitiativeTracker = () => {
     const {
@@ -45,270 +29,123 @@ export const InitiativeTracker = () => {
     const [selectedStatBlock, setSelectedStatBlock] =
         useState<StatBlock | null>(null);
 
+    const rows = allCombatants();
+    const activeCombatant = rows[selected]?.[1];
+
     return (
         <>
-            <Affix position={{ bottom: 70, right: 40 }}>
-                <ActionIcon
-                    radius="xl"
-                    size={60}
-                    onClick={() => {
-                        next();
-                    }}
-                >
-                    <PiPlayBold />
-                </ActionIcon>
-            </Affix>
-            <Affix position={{ bottom: 80, right: 120 }}>
-                <Button
-                    variant="outline"
-                    rightSection={<FaDiceD20 />}
-                    onClick={rollAllInitiative}
-                >
-                    Roll Initiative
-                </Button>
-            </Affix>
-            <Affix position={{ bottom: 80, right: 280 }}>
-                <Button
-                    variant="outline"
-                    rightSection={<FaSortAmountDown />}
-                    onClick={sort}
-                >
-                    Sort
-                </Button>
-            </Affix>
-            <Affix position={{ bottom: 80, right: 380 }}>
-                <Button
-                    variant="outline"
-                    rightSection={<PiCampfireDuotone />}
-                    onClick={() => {
-                        longRest();
+            <div className="tracker-root">
+                <div className="tracker-head">
+                    <span className="col-center">Init</span>
+                    <span>Name</span>
+                    <span className="col-center">Hit Points</span>
+                    <span className="col-center">AC</span>
+                    <span>Conditions</span>
+                    <span>Actions</span>
+                </div>
+
+                {rows.map(([id, combatant], index) => (
+                    <CombatantCard
+                        key={id}
+                        combatant={combatant}
+                        active={selected === index}
+                        onUpdate={(patch) => updateCombatant(id, patch)}
+                        onDelete={() => deleteCombatant(id)}
+                        onRoll={() => rollInitiative(id)}
+                        onOpenStatBlock={() => {
+                            if (combatant.statBlock) {
+                                setSelectedStatBlock(combatant.statBlock);
+                                setDrawerOpened(true);
+                            }
+                        }}
+                    />
+                ))}
+
+                <AddCombatantRow
+                    onAddCombatant={(
+                        combatant: Combatant,
+                        quantity: number
+                    ) => {
+                        addCombatant(combatant, quantity);
                         showNotification({
-                            title: "Long Rest",
-                            message:
-                                "All party members have been fully healed.",
+                            title: "Combatant Added",
+                            message: `${combatant.name} added to initiative tracker.`,
                             color: "green",
                             autoClose: 3000,
                         });
                     }}
-                >
-                    Long Rest
-                </Button>
-            </Affix>
-            <Table layout="fixed">
-                <Table.Thead>
-                    <Table.Tr>
-                        <Table.Th colSpan={4}>Name</Table.Th>
-                        <Table.Th colSpan={2}>HP</Table.Th>
-                        <Table.Th colSpan={1}>AC</Table.Th>
-                        <Table.Th colSpan={1}>Initiative</Table.Th>
-                        <Table.Th colSpan={3}>Conditions</Table.Th>
-                        <Table.Th colSpan={2}>Actions</Table.Th>
-                    </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                    {allCombatants().map(([id, combatant], index) => {
-                        return (
-                            <Table.Tr
-                                key={id}
-                                style={{
-                                    backgroundColor:
-                                        selected === index
-                                            ? "#3b3b3b"
-                                            : "transparent",
+                />
+            </div>
+            <AppShell.Footer className="app-footer" p="xs">
+                <Group justify="space-between" gap="sm" h="100%" wrap="nowrap">
+                    <div className="turn-indicator">
+                        <span className="turn-token">
+                            <PiSwordBold size={15} />
+                        </span>
+                        <div className="turn-meta">
+                            <span className="turn-label">Current turn</span>
+                            {activeCombatant ? (
+                                <span className="turn-name">
+                                    {activeCombatant.name}
+                                </span>
+                            ) : (
+                                <span className="turn-empty">
+                                    No combatants
+                                </span>
+                            )}
+                        </div>
+                    </div>
+                    <Group gap="sm" wrap="nowrap">
+                        <Button
+                            variant="default"
+                            rightSection={<PiCampfireDuotone />}
+                            onClick={() => {
+                                longRest();
+                                showNotification({
+                                    title: "Long Rest",
+                                    message:
+                                        "All party members have been fully healed.",
+                                    color: "green",
+                                    autoClose: 3000,
+                                });
+                            }}
+                        >
+                            Long Rest
+                        </Button>
+                        <Button
+                            variant="default"
+                            rightSection={<FaSortAmountDown />}
+                            onClick={sort}
+                        >
+                            Sort
+                        </Button>
+                        <Button
+                            variant="default"
+                            rightSection={<FaDiceD20 />}
+                            onClick={rollAllInitiative}
+                        >
+                            Roll Initiative
+                        </Button>
+                        <Tooltip label="Next turn" openDelay={300}>
+                            <ActionIcon
+                                radius="xl"
+                                size={42}
+                                variant="gradient"
+                                gradient={{
+                                    from: "orange",
+                                    to: "red",
+                                    deg: 45,
+                                }}
+                                onClick={() => {
+                                    next();
                                 }}
                             >
-                                <Table.Td colSpan={4}>
-                                    {combatant.name}{" "}
-                                    {combatant.discriminator && (
-                                        <>
-                                            <DiscriminatorBadge
-                                                type={
-                                                    combatant.discriminator.type
-                                                }
-                                                value={
-                                                    combatant.discriminator
-                                                        .value
-                                                }
-                                            />
-                                        </>
-                                    )}
-                                    <br />
-                                    {combatant.statBlock?.savingThrows && (
-                                        <Saves
-                                            statBlock={combatant.statBlock}
-                                        />
-                                    )}
-                                </Table.Td>
-                                <Table.Td colSpan={2}>
-                                    <NumberCell
-                                        initialValue={combatant.hp}
-                                        label="HP"
-                                        onChange={(hp) =>
-                                            updateCombatant(id, { hp })
-                                        }
-                                    />
-                                    {combatant.max !== undefined && (
-                                        <div
-                                            style={{
-                                                fontSize: "0.75em",
-                                                color: "#888",
-                                            }}
-                                        >
-                                            {combatant.hp} / {combatant.max}
-                                        </div>
-                                    )}
-                                </Table.Td>
-                                <Table.Td colSpan={1}>
-                                    <ClickInput
-                                        initialValue={combatant.ac}
-                                        onChange={(ac) =>
-                                            updateCombatant(id, { ac })
-                                        }
-                                    />
-                                </Table.Td>
-                                <Table.Td colSpan={1}>
-                                    <ClickInput
-                                        initialValue={combatant.initiative}
-                                        onChange={(initiative) =>
-                                            updateCombatant(id, { initiative })
-                                        }
-                                    />
-                                    {combatant.initiativeBonus !==
-                                        undefined && (
-                                        <div
-                                            style={{
-                                                fontSize: "0.75em",
-                                                color: "#888",
-                                            }}
-                                        >
-                                            {combatant.initiativeBonus >= 0
-                                                ? `+${combatant.initiativeBonus}`
-                                                : combatant.initiativeBonus}
-                                        </div>
-                                    )}
-                                </Table.Td>
-                                <Table.Td colSpan={3}>
-                                    <MultiSelect
-                                        data={conditions}
-                                        value={combatant.conditions}
-                                        leftSection={
-                                            combatant.conditions?.length >
-                                                0 && (
-                                                <Popover
-                                                    width={500}
-                                                    position="bottom"
-                                                    withArrow
-                                                    shadow="md"
-                                                >
-                                                    <Popover.Target>
-                                                        <ActionIcon variant="transparent">
-                                                            <FaSearch />
-                                                        </ActionIcon>
-                                                    </Popover.Target>
-                                                    <Popover.Dropdown>
-                                                        {combatant.conditions && (
-                                                            <ConditionDisplay
-                                                                conditions={
-                                                                    combatant.conditions
-                                                                }
-                                                            />
-                                                        )}
-                                                    </Popover.Dropdown>
-                                                </Popover>
-                                            )
-                                        }
-                                        onChange={(conditions) =>
-                                            updateCombatant(id, { conditions })
-                                        }
-                                    />
-                                </Table.Td>
-                                <Table.Td colSpan={2}>
-                                    <ActionIcon
-                                        variant="outline"
-                                        onClick={() => rollInitiative(id)}
-                                        style={{ marginLeft: "4px" }}
-                                    >
-                                        <FaDiceD20 />
-                                    </ActionIcon>
-                                    <ActionIcon
-                                        variant="outline"
-                                        disabled={!combatant.statBlock}
-                                        style={{ marginLeft: "4px" }}
-                                        onClick={() => {
-                                            if (combatant.statBlock) {
-                                                setSelectedStatBlock(
-                                                    combatant.statBlock
-                                                );
-                                                setDrawerOpened(true);
-                                            }
-                                        }}
-                                    >
-                                        <LuSword />
-                                    </ActionIcon>
-                                    {combatant.locked ? (
-                                        <DeathSaveTracker
-                                            deathSaves={combatant.deathSaves}
-                                            onChange={(deathSaves) =>
-                                                updateCombatant(id, {
-                                                    deathSaves,
-                                                })
-                                            }
-                                        />
-                                    ) : (
-                                        <ActionIcon
-                                            variant="outline"
-                                            onClick={() => deleteCombatant(id)}
-                                            style={{ marginLeft: "4px" }}
-                                            disabled={combatant.locked}
-                                        >
-                                            <RiDeleteBin2Line />
-                                        </ActionIcon>
-                                    )}
-                                    <DiscriminatorComboBox
-                                        onChange={(discriminator) =>
-                                            updateCombatant(id, {
-                                                discriminator,
-                                            })
-                                        }
-                                    />
-                                    <ActionIcon
-                                        variant="outline"
-                                        color={
-                                            combatant.locked ? "red" : "blue"
-                                        }
-                                        onClick={() =>
-                                            updateCombatant(id, {
-                                                locked: !combatant.locked,
-                                            })
-                                        }
-                                        style={{ marginLeft: "4px" }}
-                                    >
-                                        {combatant.locked ? (
-                                            <LuLockKeyhole />
-                                        ) : (
-                                            <LuLockOpen />
-                                        )}
-                                    </ActionIcon>
-                                </Table.Td>
-                            </Table.Tr>
-                        );
-                    })}
-                    <AddCombatantRow
-                        onAddCombatant={(
-                            combatant: Combatant,
-                            quantity: number
-                        ) => {
-                            addCombatant(combatant, quantity);
-                            showNotification({
-                                title: "Combatant Added",
-                                message: `${combatant.name} added to initiative tracker.`,
-                                color: "green",
-                                autoClose: 3000,
-                            });
-                        }}
-                    />
-                </Table.Tbody>
-            </Table>
+                                <PiPlayBold />
+                            </ActionIcon>
+                        </Tooltip>
+                    </Group>
+                </Group>
+            </AppShell.Footer>
             <Drawer
                 opened={drawerOpened}
                 onClose={() => setDrawerOpened(false)}

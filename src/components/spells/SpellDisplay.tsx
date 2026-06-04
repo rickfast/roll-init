@@ -1,16 +1,6 @@
-import {
-    Card,
-    Title,
-    Text,
-    Badge,
-    Group,
-    Stack,
-    Divider,
-    Box,
-    Flex,
-    Paper,
-} from "@mantine/core";
+import { Badge } from "@mantine/core";
 import { Spell } from "../../model/Spell";
+import "../reference.css";
 
 interface SpellDisplayProps {
     spell: Spell;
@@ -19,9 +9,7 @@ interface SpellDisplayProps {
 export const SpellDisplay = ({ spell }: SpellDisplayProps) => {
     const formatCastingTime = () => {
         const { type, duration } = spell.castingTime;
-        if (duration === 1) {
-            return `1 ${type}`;
-        }
+        if (duration === 1) return `1 ${type}`;
         return `${duration} ${type}${duration > 1 ? "s" : ""}`;
     };
 
@@ -42,20 +30,20 @@ export const SpellDisplay = ({ spell }: SpellDisplayProps) => {
         if (spell.components.verbal) components.push("V");
         if (spell.components.somatic) components.push("S");
         if (spell.components.material) {
-            if (spell.components.materialComponents) {
-                components.push(`M (${spell.components.materialComponents})`);
-            } else {
-                components.push("M");
-            }
+            components.push(
+                spell.components.materialComponents
+                    ? `M (${spell.components.materialComponents})`
+                    : "M"
+            );
         }
-        return components.join(", ");
+        return components.join(", ") || "—";
     };
 
     const getSchoolColor = (school: string) => {
         const colors: Record<string, string> = {
             Abjuration: "blue",
             Conjuration: "yellow",
-            Divination: "purple",
+            Divination: "grape",
             Enchantment: "pink",
             Evocation: "red",
             Illusion: "indigo",
@@ -65,126 +53,101 @@ export const SpellDisplay = ({ spell }: SpellDisplayProps) => {
         return colors[school] || "gray";
     };
 
-    const getLevelColor = (level: string) => {
-        if (level === "Cantrip") return "gray";
-        const levelNum = parseInt(level);
-        if (levelNum <= 3) return "green";
-        if (levelNum <= 6) return "yellow";
-        return "red";
-    };
+    const levelLabel =
+        spell.level === "Cantrip" ? "Cantrip" : `${spell.level} Level`;
 
     return (
-        <Card withBorder shadow="sm" radius="md">
-            <Stack gap="md">
-                {/* Header */}
-                <Box>
-                    <Title order={2} mb="xs">
-                        {spell.name}
-                    </Title>
-                    <Group gap="xs">
-                        <Badge
-                            color={getLevelColor(spell.level)}
-                            variant="filled"
-                        >
-                            {spell.level} Level
+        <div className="ref-card">
+            <div className="ref-stack">
+                {/* header */}
+                <div>
+                    <h2 className="ref-name">{spell.name}</h2>
+                    <div className="ref-subtitle">
+                        {levelLabel} · {spell.school}
+                    </div>
+                    <div className="ref-badges">
+                        <Badge color="orange" variant="filled">
+                            {levelLabel}
                         </Badge>
                         <Badge
                             color={getSchoolColor(spell.school)}
-                            variant="outline"
+                            variant="light"
                         >
                             {spell.school}
                         </Badge>
                         {spell.ritual && (
-                            <Badge color="violet" variant="light">
+                            <Badge color="violet" variant="outline">
                                 Ritual
                             </Badge>
                         )}
                         {spell.concentration && (
-                            <Badge color="orange" variant="light">
+                            <Badge color="yellow" variant="outline">
                                 Concentration
                             </Badge>
                         )}
-                    </Group>
-                </Box>
+                    </div>
+                </div>
 
-                <Divider />
+                {/* stat grid */}
+                <div className="spell-stats">
+                    <div className="stat">
+                        <div className="label">Casting Time</div>
+                        <div className="value">{formatCastingTime()}</div>
+                    </div>
+                    <div className="stat">
+                        <div className="label">Range</div>
+                        <div className="value">{formatRange()}</div>
+                    </div>
+                    <div className="stat">
+                        <div className="label">Components</div>
+                        <div className="value">{formatComponents()}</div>
+                    </div>
+                    <div className="stat">
+                        <div className="label">Duration</div>
+                        <div className="value">
+                            {spell.concentration ? "Concentration, " : ""}
+                            {spell.duration}
+                        </div>
+                    </div>
+                </div>
 
-                {/* Spell Stats */}
-                <Paper p="sm" radius="sm">
-                    <Stack gap="xs">
-                        <Flex justify="space-between">
-                            <Text fw={500}>Casting Time:</Text>
-                            <Text>{formatCastingTime()}</Text>
-                        </Flex>
-                        <Flex justify="space-between">
-                            <Text fw={500}>Range:</Text>
-                            <Text>{formatRange()}</Text>
-                        </Flex>
-                        <Flex justify="space-between">
-                            <Text fw={500}>Components:</Text>
-                            <Text>{formatComponents()}</Text>
-                        </Flex>
-                        <Flex justify="space-between">
-                            <Text fw={500}>Duration:</Text>
-                            <Text>
-                                {spell.concentration ? "Concentration, " : ""}
-                                {spell.duration}
-                            </Text>
-                        </Flex>
-                    </Stack>
-                </Paper>
-
-                {/* Classes */}
+                {/* classes */}
                 {spell.classes.length > 0 && (
-                    <Box>
-                        <Text fw={500} mb="xs">
-                            Classes:
-                        </Text>
-                        <Group gap="xs">
-                            {spell.classes.map((className) => (
-                                <Badge
-                                    key={className}
-                                    variant="light"
-                                    color="teal"
-                                >
-                                    {className}
-                                </Badge>
-                            ))}
-                        </Group>
-                    </Box>
+                    <div className="ref-meta-row" style={{ padding: 0 }}>
+                        <span className="k">Classes</span>
+                        <span className="v">{spell.classes.join(", ")}</span>
+                    </div>
                 )}
 
-                <Divider />
+                <hr className="ref-rule" />
 
-                {/* Description */}
-                <Box>
-                    <Stack gap="sm">
-                        {spell.description.map((entry, index) => (
-                            <Box key={index}>
-                                {entry.title && (
-                                    <Text fw={600} mb="xs">
-                                        {entry.title}
-                                    </Text>
-                                )}
-                                <Text>{entry.text}</Text>
-                            </Box>
-                        ))}
-                    </Stack>
-                </Box>
+                {/* description */}
+                <div>
+                    {spell.description.map((entry, index) => (
+                        <p
+                            className="ref-feature"
+                            key={index}
+                            style={{ marginBottom: 12 }}
+                        >
+                            {entry.title && (
+                                <span className="fname">{entry.title}. </span>
+                            )}
+                            <span>{entry.text}</span>
+                        </p>
+                    ))}
+                </div>
 
-                {/* Higher Level */}
+                {/* higher level */}
                 {spell.higherLevel && (
-                    <>
-                        <Divider />
-                        <Box>
-                            <Text fw={600} mb="xs">
-                                At Higher Levels
-                            </Text>
-                            <Text>{spell.higherLevel}</Text>
-                        </Box>
-                    </>
+                    <div>
+                        <hr className="ref-rule thin" />
+                        <p className="ref-feature">
+                            <span className="fname">At Higher Levels.</span>
+                            <span>{spell.higherLevel}</span>
+                        </p>
+                    </div>
                 )}
-            </Stack>
-        </Card>
+            </div>
+        </div>
     );
 };

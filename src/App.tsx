@@ -5,6 +5,7 @@ import "@mantine/core/styles.layer.css";
 import "@mantine/notifications/styles.css";
 import "mantine-datatable/styles.layer.css";
 import "./layout.css";
+import "./components/shell.css";
 
 import {
     AppShell,
@@ -35,6 +36,15 @@ import { CriticalTables } from "./components/crittables/CriticalTables";
 import { GiDiceFire } from "react-icons/gi";
 
 const theme = createTheme({
+    primaryColor: "orange",
+    primaryShade: { light: 6, dark: 5 },
+    defaultRadius: "md",
+    fontFamily:
+        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+    headings: {
+        fontFamily: '"Cinzel", Georgia, serif',
+        fontWeight: "600",
+    },
     components: {
         Loader: Loader.extend({
             defaultProps: {
@@ -60,64 +70,73 @@ export default function App() {
                             collapsed: { mobile: true },
                         }}
                         padding="md"
-                        styles={{
-                            header: {
-                                fontFamily: "Centra No2 Book",
-                            },
-                        }}
                     >
                         <AppShellHeader>
                             <Header />
                         </AppShellHeader>
-                        <AppShell.Navbar p="md">
-                            <NavLink
-                                label="Initiative Tracker"
-                                href="/track"
-                                key="Initiative Tracker"
-                                icon={<LuSwords />}
-                            />
-                            <NavLink
-                                label="Stat Block Editor"
-                                href="/statblock"
-                                key="Edit Stat Block"
-                                icon={<FaEdit />}
-                            />
-                            <NavLink
-                                label="Stat Block Generator"
-                                href="/generate"
-                                key="Generate Stat Block"
-                                icon={<PiSparkleDuotone />}
-                            />
-                            <NavLink
-                                label="Bestiary"
-                                href="/bestiary"
-                                key="Bestiary"
-                                icon={<GiSpikedDragonHead />}
-                            />
-                            <NavLink
-                                label="Spells"
-                                href="/spells"
-                                key="Spells"
-                                icon={<GiBoltSpellCast />}
-                            />
-                            <NavLink
-                                label="Crit Tables"
-                                href="/crittables"
-                                key="Crit Tables"
-                                icon={<GiDiceFire />}
-                            />
-                            <NavLink
-                                label="Import Bestiary"
-                                href="/import"
-                                key="Import Bestiary"
-                                icon={<TbDatabaseImport />}
-                            />
-                            <NavLink
-                                label="Settings"
-                                href="/admin"
-                                key="Settings"
-                                icon={<IoSettingsOutline />}
-                            />
+                        <AppShell.Navbar className="app-navbar" p="md">
+                            <div className="nav-section">
+                                <div className="nav-section-label">Combat</div>
+                                <NavLink
+                                    label="Initiative Tracker"
+                                    href="/track"
+                                    key="Initiative Tracker"
+                                    icon={<LuSwords />}
+                                />
+                            </div>
+                            <div className="nav-section">
+                                <div className="nav-section-label">Create</div>
+                                <NavLink
+                                    label="Stat Block Editor"
+                                    href="/statblock"
+                                    key="Edit Stat Block"
+                                    icon={<FaEdit />}
+                                />
+                                <NavLink
+                                    label="Stat Block Generator"
+                                    href="/generate"
+                                    key="Generate Stat Block"
+                                    icon={<PiSparkleDuotone />}
+                                />
+                            </div>
+                            <div className="nav-section">
+                                <div className="nav-section-label">
+                                    Reference
+                                </div>
+                                <NavLink
+                                    label="Bestiary"
+                                    href="/bestiary"
+                                    key="Bestiary"
+                                    icon={<GiSpikedDragonHead />}
+                                />
+                                <NavLink
+                                    label="Spells"
+                                    href="/spells"
+                                    key="Spells"
+                                    icon={<GiBoltSpellCast />}
+                                />
+                                <NavLink
+                                    label="Crit Tables"
+                                    href="/crittables"
+                                    key="Crit Tables"
+                                    icon={<GiDiceFire />}
+                                />
+                            </div>
+                            <div className="nav-section">
+                                <div className="nav-section-label">Manage</div>
+                                <NavLink
+                                    label="Import Bestiary"
+                                    href="/import"
+                                    key="Import Bestiary"
+                                    icon={<TbDatabaseImport />}
+                                />
+                                <NavLink
+                                    label="Settings"
+                                    href="/admin"
+                                    key="Settings"
+                                    icon={<IoSettingsOutline />}
+                                />
+                            </div>
                         </AppShell.Navbar>
                         <AppShell.Main>
                             <Routes>

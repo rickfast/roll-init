@@ -11,6 +11,7 @@ import { importBestiary, importSpells } from "../../action/import/import";
 import { Context } from "../../model/Context";
 import { showNotification } from "@mantine/notifications";
 import { ImportForm } from "./ImportForm";
+import "../forms.css";
 
 async function loadShiki() {
     const { createHighlighter } = await import("shiki");
@@ -45,6 +46,12 @@ export const ImportScreen = () => {
 
     return (
         <Box mx="auto">
+            <div className="page-head">
+                <h1 className="page-title">Import</h1>
+                <div className="page-subtitle">
+                    Bring creatures and spells in from 5e Tools JSON exports.
+                </div>
+            </div>
             <CodeHighlightAdapterProvider adapter={shikiAdapter}>
                 <Grid>
                     <Grid.Col span={6}>
