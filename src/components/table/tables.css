@@ -1,0 +1,99 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&display=swap");
+
+/* ===== page header (shared) ===== */
+.page-head {
+    margin-bottom: 18px;
+}
+.page-title {
+    font-family: "Cinzel", Georgia, serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--ember, #f0883e);
+    margin: 0;
+    line-height: 1.1;
+}
+.page-subtitle {
+    color: #9a9da4;
+    font-size: 0.9rem;
+    margin-top: 3px;
+}
+
+/* ===== generic data table (bestiary / spells) ===== */
+.data-table-wrap {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #1c1d22;
+}
+.data-table thead th {
+    background: #212229 !important;
+    font-family: "Cinzel", Georgia, serif;
+    font-size: 11px !important;
+    font-weight: 600;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--ember, #f0883e) !important;
+    border-bottom: 1px solid rgba(240, 136, 62, 0.28) !important;
+}
+.data-table tbody tr {
+    cursor: pointer;
+    transition: background 0.12s ease;
+}
+.data-table tbody td {
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    font-size: 14px;
+}
+.data-table tbody tr:hover td {
+    background: rgba(255, 255, 255, 0.035);
+}
+.data-table tbody tr[data-selected="true"] td {
+    background: rgba(240, 136, 62, 0.14) !important;
+    color: #f3ede3;
+}
+.data-table tbody tr[data-selected="true"] td:first-child {
+    box-shadow: inset 3px 0 0 var(--ember, #f0883e);
+}
+
+/* ===== critical tables ===== */
+.crit-tabs .mantine-Tabs-tab {
+    font-family: "Cinzel", Georgia, serif;
+    letter-spacing: 0.5px;
+}
+.crit-card {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #1c1d22;
+}
+.crit-card .mantine-datatable thead th {
+    background: #212229 !important;
+    font-family: "Cinzel", Georgia, serif !important;
+    font-size: 11px !important;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--ember, #f0883e) !important;
+    border-bottom: 1px solid rgba(240, 136, 62, 0.28) !important;
+}
+.crit-roll {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 46px;
+    padding: 3px 8px;
+    border-radius: 7px;
+    font-family: "Cinzel", Georgia, serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: #ececf0;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.crit-name {
+    font-weight: 600;
+    color: #f1ebe1;
+}
+.crit-effect {
+    color: #c9cace;
+    line-height: 1.5;
+}

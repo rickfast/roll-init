@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from "react-router";
 import { Filter, filterCatalog, FilterType } from "../../model/Filter";
 import { useScrollIntoView } from "@mantine/hooks";
 import { TextFilter } from "./FilterPopover";
+import "./tables.css";
 
 export interface Field {
     name: string;
@@ -63,8 +64,12 @@ export function DataTable<T>({ fields, data, path, actions }: Props<T>) {
     }
 
     return (
-        <ScrollArea h={window.innerHeight - 100} viewportRef={scrollableRef}>
-            <Table striped highlightOnHover withColumnBorders stickyHeader>
+        <ScrollArea
+            className="data-table-wrap"
+            h={window.innerHeight - 100}
+            viewportRef={scrollableRef}
+        >
+            <Table className="data-table" highlightOnHover stickyHeader verticalSpacing="sm">
                 <Table.Thead>
                     <Table.Tr>
                         {
@@ -93,7 +98,7 @@ export function DataTable<T>({ fields, data, path, actions }: Props<T>) {
                             key={id}
                             onClick={() => navigate(`${path}?id=${id}`)}
                             ref={selected === id ? targetRef : undefined}
-                            style={{ backgroundColor: selected === id ? '#3b3b3b' : 'transparent' }}>
+                            data-selected={selected === id}>
                             {
                                 // @ts-ignore
                                 fields.map(field => <Table.Td>{item[field.field]}</Table.Td>)
