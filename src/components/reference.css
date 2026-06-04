@@ -1,0 +1,215 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&display=swap");
+
+/* ===== shared card (stat block + spell) ===== */
+.ref-card {
+    background: linear-gradient(180deg, #212229 0%, #1b1c21 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 3px solid var(--ember, #f0883e);
+    border-radius: 12px;
+    padding: 22px 26px 26px;
+    box-shadow: 0 16px 48px -22px rgba(0, 0, 0, 0.7);
+    color: #d6d7dc;
+}
+
+.ref-name {
+    font-family: "Cinzel", Georgia, serif;
+    font-size: 1.85rem;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: 0.5px;
+    color: var(--ember, #f0883e);
+    margin: 0;
+}
+.ref-subtitle {
+    font-style: italic;
+    color: #9a9da4;
+    margin-top: 3px;
+    font-size: 0.95rem;
+}
+
+/* tapered ember rule, echoing the classic 5e stat block */
+.ref-rule {
+    height: 6px;
+    border: 0;
+    margin: 16px 0;
+    background: var(--ember, #f0883e);
+    clip-path: polygon(
+        0 50%,
+        5px 0,
+        calc(100% - 5px) 0,
+        100% 50%,
+        calc(100% - 5px) 100%,
+        5px 100%
+    );
+    opacity: 0.85;
+}
+.ref-rule.thin {
+    height: 2px;
+    clip-path: none;
+    background: linear-gradient(
+        90deg,
+        rgba(240, 136, 62, 0.5),
+        rgba(240, 136, 62, 0.05)
+    );
+    opacity: 1;
+}
+
+.ref-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 11px;
+}
+
+/* ===== top stat band (AC / HP / Speed …) ===== */
+.ref-band {
+    display: flex;
+    flex-wrap: wrap;
+    background: rgba(240, 136, 62, 0.06);
+    border: 1px solid rgba(240, 136, 62, 0.18);
+    border-radius: 10px;
+    overflow: hidden;
+}
+.ref-band .band-item {
+    flex: 1 1 0;
+    min-width: 120px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 12px 16px;
+}
+.ref-band .band-item + .band-item {
+    border-left: 1px solid rgba(255, 255, 255, 0.07);
+}
+.ref-band .band-icon {
+    display: flex;
+    color: var(--ember, #f0883e);
+}
+.ref-band .band-label {
+    font-size: 9.5px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: #8a8d95;
+}
+.ref-band .band-value {
+    font-family: "Cinzel", Georgia, serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: #ececf0;
+    line-height: 1.2;
+}
+
+/* ===== ability score tiles ===== */
+.ref-abilities {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+}
+.ref-ability {
+    text-align: center;
+    padding: 9px 4px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+}
+.ref-ability .abbr {
+    font-family: "Cinzel", Georgia, serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: var(--ember, #f0883e);
+}
+.ref-ability .score {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ececf0;
+    line-height: 1.3;
+}
+.ref-ability .mod {
+    font-size: 12px;
+    color: #9a9da4;
+}
+
+/* ===== section headings + features ===== */
+.ref-section-title {
+    font-family: "Cinzel", Georgia, serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--ember, #f0883e);
+    border-bottom: 1px solid rgba(240, 136, 62, 0.32);
+    padding-bottom: 5px;
+    margin: 0 0 11px;
+}
+.ref-feature {
+    margin-bottom: 9px;
+    line-height: 1.55;
+    font-size: 14px;
+}
+.ref-feature:last-child {
+    margin-bottom: 0;
+}
+.ref-feature .fname {
+    font-weight: 700;
+    font-style: italic;
+    color: #f1ebe1;
+    margin-right: 4px;
+}
+
+/* ===== meta rows (saves / skills / senses …) ===== */
+.ref-meta {
+    display: flex;
+    flex-direction: column;
+}
+.ref-meta-row {
+    display: flex;
+    gap: 8px;
+    font-size: 13.5px;
+    padding: 5px 0;
+    line-height: 1.45;
+}
+.ref-meta-row + .ref-meta-row {
+    border-top: 1px dashed rgba(255, 255, 255, 0.06);
+}
+.ref-meta-row .k {
+    color: var(--ember, #f0883e);
+    font-weight: 600;
+    flex-shrink: 0;
+}
+.ref-meta-row .v {
+    color: #d6d7dc;
+}
+
+/* ===== spell stat grid ===== */
+.spell-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 10px;
+    overflow: hidden;
+}
+.spell-stats .stat {
+    background: #1d1e23;
+    padding: 11px 15px;
+}
+.spell-stats .stat .label {
+    font-size: 9.5px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: #8a8d95;
+    margin-bottom: 2px;
+}
+.spell-stats .stat .value {
+    font-size: 14px;
+    color: #ececf0;
+    font-weight: 500;
+}
+
+.ref-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
