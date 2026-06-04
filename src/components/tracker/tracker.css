@@ -16,9 +16,11 @@
     --tr-hp-bad: #fa5252;
     --tr-temp: #4dabf7;
 
-    /* shared column rhythm for header + cards */
+    /* shared column rhythm for header + cards — every track is fixed except
+       the two flexible (fr) columns, so the header and cards resolve their
+       grids identically and stay column-aligned */
     --tr-cols: 60px minmax(150px, 1.25fr) 234px 70px minmax(168px, 1.35fr)
-        max-content;
+        190px;
 
     display: flex;
     flex-direction: column;
@@ -32,7 +34,9 @@
     grid-template-columns: var(--tr-cols);
     align-items: center;
     gap: 16px;
-    padding: 4px 20px 6px;
+    /* match a card's content box: 3px left border + 18px padding = 21px left,
+       1px right border + 18px padding = 19px right */
+    padding: 4px 19px 6px 21px;
 }
 .tracker-head span {
     font-family: "Cinzel", Georgia, serif;
