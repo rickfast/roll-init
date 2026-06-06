@@ -52,6 +52,9 @@ export interface ViewModel {
     pushNotification: (notification: string) => void;
     searchable: Map<string, SearchData>;
     longRest: () => void;
+    reset: () => void;
+    trackerVisible: boolean;
+    toggleTrackerVisible: () => void;
 }
 
 export type Type = "monster" | "spell";
@@ -81,6 +84,8 @@ export function useViewModel(initialData: SaveData): ViewModel {
     );
     const [notifications, setNotifications] = useState(new Set<string>());
     const [saving, setSaving] = useState(false);
+    // Whether the synced Owlbear player display shows the tracker.
+    const [trackerVisible, setTrackerVisible] = useState(true);
 
     const [searchable, setSearchable] = useState<Map<string, SearchData>>(
         createSearchData(initialData.bestiary, {})
@@ -126,8 +131,12 @@ export function useViewModel(initialData: SaveData): ViewModel {
     // Stream combat state to the Owlbear bridge. Includes `selected` so turn
     // advances (which don't change `combatants`) still propagate to displays.
     useEffect(() => {
-        pushCombatState(Array.from(combatants.entries()), selected);
-    }, [combatants, selected]);
+        pushCombatState(
+            Array.from(combatants.entries()),
+            selected,
+            trackerVisible
+        );
+    }, [combatants, selected, trackerVisible]);
 
     const pushNotification = (notification: string) => {
         if (!notifications.has(notification)) {
@@ -367,6 +376,23 @@ export function useViewModel(initialData: SaveData): ViewModel {
     const getSelectedCombatant = () =>
         Array.from(combatants.values())[selected];
 
+    const reset = () => {
+        const entries = Array.from(combatants.entries());
+        if (entries.length === 0) {
+            return;
+        }
+        // Point the current turn at the highest-initiative combatant.
+        let maxIdx = 0;
+        for (let i = 1; i < entries.length; i++) {
+            if (entries[i][1].initiative > entries[maxIdx][1].initiative) {
+                maxIdx = i;
+            }
+        }
+        setSelected(maxIdx);
+    };
+
+    const toggleTrackerVisible = () => setTrackerVisible((v) => !v);
+
     const longRest = () => {
         const all: [string, Combatant][] = allCombatants().map(
             ([key, combatant]) => {
@@ -412,5 +438,8 @@ export function useViewModel(initialData: SaveData): ViewModel {
         pushNotification,
         searchable,
         longRest,
+        reset,
+        trackerVisible,
+        toggleTrackerVisible,
     };
 }

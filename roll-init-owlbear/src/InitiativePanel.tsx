@@ -10,9 +10,13 @@ interface Props {
 }
 
 export function InitiativePanel({ role, state, bridgeStatus }: Props) {
-  const combatants = [...(state?.combatants ?? [])].sort(
-    (a, b) => b.initiative - a.initiative
-  );
+  // DM can hide the tracker from players; the GM window still sees it (with a note).
+  const hidden = state?.visible === false;
+  const combatants = hidden
+    ? []
+    : [...(state?.combatants ?? [])].sort(
+        (a, b) => b.initiative - a.initiative
+      );
 
   // Keep the active combatant scrolled into view as the turn advances.
   const activeId = combatants.find((c) => c.active)?.id;
@@ -20,6 +24,37 @@ export function InitiativePanel({ role, state, bridgeStatus }: Props) {
   useEffect(() => {
     activeRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, [activeId]);
+
+  let body;
+  if (hidden) {
+    // Players see a neutral message; the GM sees that it's deliberately hidden.
+    body = (
+      <div className="empty">
+        {role === "GM" ? "Tracker hidden from players" : "No active combat."}
+      </div>
+    );
+  } else if (combatants.length === 0) {
+    body = (
+      <div className="empty">
+        {role === "GM"
+          ? "Waiting for combat from Roll Initiative…"
+          : "No active combat."}
+      </div>
+    );
+  } else {
+    body = (
+      <ul className="list">
+        {combatants.map((c) => (
+          <Row
+            key={c.id}
+            c={c}
+            role={role}
+            rowRef={c.active ? activeRef : undefined}
+          />
+        ))}
+      </ul>
+    );
+  }
 
   return (
     <div className="panel">
@@ -36,25 +71,7 @@ export function InitiativePanel({ role, state, bridgeStatus }: Props) {
           </span>
         )}
       </header>
-
-      {combatants.length === 0 ? (
-        <div className="empty">
-          {role === "GM"
-            ? "Waiting for combat from Roll Initiative…"
-            : "No active combat."}
-        </div>
-      ) : (
-        <ul className="list">
-          {combatants.map((c) => (
-            <Row
-              key={c.id}
-              c={c}
-              role={role}
-              rowRef={c.active ? activeRef : undefined}
-            />
-          ))}
-        </ul>
-      )}
+      {body}
     </div>
   );
 }

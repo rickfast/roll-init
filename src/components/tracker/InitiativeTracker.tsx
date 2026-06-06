@@ -5,7 +5,14 @@ import { useContext, useState } from "react";
 import { StatBlockDisplay2 } from "../statblock/StatBlockDisplay2";
 import { StatBlock } from "../../model/StatBlock";
 import { Context } from "../../model/Context";
-import { PiCampfireDuotone, PiPlayBold, PiSwordBold } from "react-icons/pi";
+import {
+    PiArrowCounterClockwiseBold,
+    PiCampfireDuotone,
+    PiEyeBold,
+    PiEyeSlashBold,
+    PiPlayBold,
+    PiSwordBold,
+} from "react-icons/pi";
 import { FaDiceD20, FaSortAmountDown } from "react-icons/fa";
 import { showNotification } from "@mantine/notifications";
 import { CombatantCard } from "./CombatantCard";
@@ -23,6 +30,9 @@ export const InitiativeTracker = () => {
         rollAllInitiative,
         sort,
         longRest,
+        reset,
+        trackerVisible,
+        toggleTrackerVisible,
     } = useContext(Context);
 
     const [drawerOpened, setDrawerOpened] = useState(false);
@@ -112,6 +122,52 @@ export const InitiativeTracker = () => {
                         >
                             Long Rest
                         </Button>
+                        <Tooltip
+                            label={
+                                trackerVisible
+                                    ? "Hide tracker on player display"
+                                    : "Show tracker on player display"
+                            }
+                            openDelay={300}
+                        >
+                            <Button
+                                variant="default"
+                                rightSection={
+                                    trackerVisible ? (
+                                        <PiEyeSlashBold />
+                                    ) : (
+                                        <PiEyeBold />
+                                    )
+                                }
+                                onClick={() => {
+                                    toggleTrackerVisible();
+                                    showNotification({
+                                        title: trackerVisible
+                                            ? "Tracker Hidden"
+                                            : "Tracker Shown",
+                                        message: trackerVisible
+                                            ? "The initiative tracker is hidden from the player display."
+                                            : "The initiative tracker is visible on the player display.",
+                                        color: "blue",
+                                        autoClose: 3000,
+                                    });
+                                }}
+                            >
+                                {trackerVisible ? "Hide" : "Show"}
+                            </Button>
+                        </Tooltip>
+                        <Tooltip
+                            label="Reset turn to the highest initiative"
+                            openDelay={300}
+                        >
+                            <Button
+                                variant="default"
+                                rightSection={<PiArrowCounterClockwiseBold />}
+                                onClick={reset}
+                            >
+                                Reset
+                            </Button>
+                        </Tooltip>
                         <Button
                             variant="default"
                             rightSection={<FaSortAmountDown />}

@@ -25,6 +25,8 @@ export interface SyncCombatant {
 export interface SyncState {
     /** Monotonic counter so receivers can ignore out-of-order frames. */
     version: number;
+    /** When false, the player display hides the tracker (DM toggle). */
+    visible: boolean;
     combatants: SyncCombatant[];
 }
 
@@ -68,10 +70,12 @@ function toSync(c: Combatant, active: boolean): SyncCombatant {
  */
 export function pushCombatState(
     combatants: [string, Combatant][],
-    selected: number
+    selected: number,
+    visible: boolean
 ): void {
     const state: SyncState = {
         version: ++version,
+        visible,
         combatants: combatants
             .map(([, c], i) => toSync(c, i === selected))
             .sort((a, b) => b.initiative - a.initiative),

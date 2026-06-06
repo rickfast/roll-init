@@ -19,6 +19,9 @@ export interface SyncCombatant {
 
 export interface SyncState {
   version: number;
+  /** When false, the DM has hidden the tracker from the player display.
+   *  Optional for backward-compatibility with frames sent before this field. */
+  visible?: boolean;
   combatants: SyncCombatant[];
 }
 
