@@ -3,6 +3,7 @@ import { Combatant } from "./Combatant";
 import { SaveData, store } from "./store";
 import { StatBlock } from "./StatBlock";
 import { Spell } from "./Spell";
+import { pushCombatState } from "../action/owlbear/sync";
 
 function roll20(): number {
     return Math.floor(Math.random() * 20) + 1;
@@ -121,6 +122,12 @@ export function useViewModel(initialData: SaveData): ViewModel {
         save();
         setSearchable(createSearchData(bestiary, spells));
     }, [bestiary, apiKey, combatants, spells]);
+
+    // Stream combat state to the Owlbear bridge. Includes `selected` so turn
+    // advances (which don't change `combatants`) still propagate to displays.
+    useEffect(() => {
+        pushCombatState(Array.from(combatants.entries()), selected);
+    }, [combatants, selected]);
 
     const pushNotification = (notification: string) => {
         if (!notifications.has(notification)) {
