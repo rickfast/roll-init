@@ -99,6 +99,29 @@ body {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+/* WebKit / Chromium */
+.list::-webkit-scrollbar {
+  width: 10px;
+}
+
+.list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.list::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 6px;
+  /* inset the thumb so it reads as a slim pill against the dark background */
+  border: 2px solid var(--bg);
+}
+
+.list::-webkit-scrollbar-thumb:hover {
+  background: #4a5160;
 }
 
 .row {
