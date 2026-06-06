@@ -49,9 +49,10 @@ function toSync(c: Combatant, active: boolean): SyncCombatant {
         tempHp: c.tempHp,
         ac: c.ac,
         conditions: c.conditions ?? [],
-        // Heuristic for now: combatants added without a stat block are PCs.
-        // Phase 5 replaces this with an explicit flag on the tracker row.
-        isPlayer: !c.statBlock,
+        // `locked` is the app's PC flag (the "Lock (PC)" toggle on the card):
+        // locked combatants are player characters, so they show HP numbers to
+        // everyone on the player display.
+        isPlayer: !!c.locked,
         active,
         dead: c.hp <= 0,
     };
