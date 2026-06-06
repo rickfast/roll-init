@@ -40,3 +40,12 @@ npm run preview      # serve the built dist/ on :5173
 
 For permanent use, host `dist/` somewhere stable and point the manifest URL
 there.
+
+## Troubleshooting
+
+**CORS error loading the manifest** — Owlbear fetches `manifest.json`
+cross-origin, so the server must allow Owlbear's origin. The dev and preview
+servers are already configured for this in `vite.config.ts` (`server.cors` /
+`preview.cors` scoped to `*.owlbear.rodeo`). If you self-host the built `dist/`
+elsewhere, that host must send `Access-Control-Allow-Origin` for the Owlbear
+origin too.
