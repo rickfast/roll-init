@@ -1,3 +1,4 @@
+import { Ref, useEffect, useRef } from "react";
 import { Role } from "./useRole";
 import { BridgeStatus } from "./useBridge";
 import { SyncCombatant, SyncState } from "./types";
@@ -12,6 +13,13 @@ export function InitiativePanel({ role, state, bridgeStatus }: Props) {
   const combatants = [...(state?.combatants ?? [])].sort(
     (a, b) => b.initiative - a.initiative
   );
+
+  // Keep the active combatant scrolled into view as the turn advances.
+  const activeId = combatants.find((c) => c.active)?.id;
+  const activeRef = useRef<HTMLLIElement>(null);
+  useEffect(() => {
+    activeRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, [activeId]);
 
   return (
     <div className="panel">
@@ -38,7 +46,12 @@ export function InitiativePanel({ role, state, bridgeStatus }: Props) {
       ) : (
         <ul className="list">
           {combatants.map((c) => (
-            <Row key={c.id} c={c} role={role} />
+            <Row
+              key={c.id}
+              c={c}
+              role={role}
+              rowRef={c.active ? activeRef : undefined}
+            />
           ))}
         </ul>
       )}
@@ -46,14 +59,25 @@ export function InitiativePanel({ role, state, bridgeStatus }: Props) {
   );
 }
 
-function Row({ c, role }: { c: SyncCombatant; role: Role }) {
+function Row({
+  c,
+  role,
+  rowRef,
+}: {
+  c: SyncCombatant;
+  role: Role;
+  rowRef?: Ref<HTMLLIElement>;
+}) {
   // PCs show numbers to everyone; monster numbers are GM-only.
   const showNumbers = role === "GM" || c.isPlayer;
   const pct = c.max > 0 ? Math.max(0, Math.min(100, (c.hp / c.max) * 100)) : 0;
   const hpClass = pct > 50 ? "hp-high" : pct > 25 ? "hp-mid" : "hp-low";
 
   return (
-    <li className={`row${c.active ? " active" : ""}${c.dead ? " dead" : ""}`}>
+    <li
+      ref={rowRef}
+      className={`row${c.active ? " active" : ""}${c.dead ? " dead" : ""}`}
+    >
       <div className="init" title="Initiative">
         {c.initiative}
       </div>
