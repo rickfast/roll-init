@@ -5,6 +5,7 @@
   "author": "rickfast",
   "icon": "/icon.svg",
   "description": "Mirrors the Roll Initiative desktop tracker onto an Owlbear player display.",
+  "background": "/background.html",
   "action": {
     "title": "Roll Initiative",
     "icon": "/icon.svg",

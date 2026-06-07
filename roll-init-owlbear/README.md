@@ -18,6 +18,10 @@ Roll Initiative (Tauri)
 - The **player display** just reads room metadata — it can be a separate device.
 - Role is detected with `OBR.player.getRole()`; players never connect to the
   bridge and only see HP numbers for player characters.
+- A persistent **background page** (`src/background.ts`) watches the synced
+  `visible` flag and opens/closes the action popover, so hiding the tracker
+  fully collapses it (it no longer covers the map) and showing it pops the
+  panel back open automatically.
 
 ## Develop
 
