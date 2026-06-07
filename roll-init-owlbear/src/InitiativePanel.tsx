@@ -46,12 +46,7 @@ export function InitiativePanel({ role, state, bridgeStatus }: Props) {
     body = (
       <ul className="list">
         {combatants.map((c) => (
-          <Row
-            key={c.id}
-            c={c}
-            role={role}
-            rowRef={c.active ? activeRef : undefined}
-          />
+          <Row key={c.id} c={c} rowRef={c.active ? activeRef : undefined} />
         ))}
       </ul>
     );
@@ -79,15 +74,14 @@ export function InitiativePanel({ role, state, bridgeStatus }: Props) {
 
 function Row({
   c,
-  role,
   rowRef,
 }: {
   c: SyncCombatant;
-  role: Role;
   rowRef?: Ref<HTMLLIElement>;
 }) {
-  // PCs show numbers to everyone; monsters show only the bar to players.
-  const showNumbers = role === "GM" || c.isPlayer;
+  // Only player characters show HP numbers; monsters are always bar-only
+  // (regardless of who's viewing). PCs are the "Lock (PC)" combatants.
+  const showNumbers = c.isPlayer;
   const ratio = c.max > 0 ? c.hp / c.max : 0;
   const hpClass = ratio > 0.5 ? "hp-high" : ratio > 0.25 ? "hp-mid" : "hp-low";
   // Scale the bar so current + temp HP always fits (temp can push past max).
