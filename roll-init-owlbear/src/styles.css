@@ -207,14 +207,18 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 22px;
-  height: 20px;
-  padding: 0 5px;
-  border-radius: 4px;
-  background: #1d2733;
-  color: #b9d4ec;
-  font-weight: 600;
+  width: 24px;
+  height: 27px;
+  /* nudge the number up: the shield tapers to a point at the bottom */
+  padding-bottom: 4px;
+  background: linear-gradient(#3c4a5e, #28323f);
+  color: #dce9f5;
+  font-weight: 700;
   font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  clip-path: polygon(50% 0, 100% 14%, 100% 56%, 50% 100%, 0 56%, 0 14%);
+  /* drop-shadow follows the shield silhouette, giving it a crisp edge */
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
 }
 
 .hp {
