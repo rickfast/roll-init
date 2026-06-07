@@ -86,10 +86,15 @@ function Row({
   role: Role;
   rowRef?: Ref<HTMLLIElement>;
 }) {
-  // PCs show numbers to everyone; monster numbers are GM-only.
+  // PCs show numbers to everyone; monsters show only the bar to players.
   const showNumbers = role === "GM" || c.isPlayer;
-  const pct = c.max > 0 ? Math.max(0, Math.min(100, (c.hp / c.max) * 100)) : 0;
-  const hpClass = pct > 50 ? "hp-high" : pct > 25 ? "hp-mid" : "hp-low";
+  const ratio = c.max > 0 ? c.hp / c.max : 0;
+  const hpClass = ratio > 0.5 ? "hp-high" : ratio > 0.25 ? "hp-mid" : "hp-low";
+  // Scale the bar so current + temp HP always fits (temp can push past max).
+  const temp = c.tempHp ?? 0;
+  const scale = Math.max(c.max, c.hp + temp) || 1;
+  const hpPct = Math.max(0, (c.hp / scale) * 100);
+  const tempPct = temp > 0 ? (temp / scale) * 100 : 0;
 
   return (
     <li
@@ -129,24 +134,20 @@ function Row({
 
         <div className="hp">
           <div className="hp-bar">
-            <div className={`hp-fill ${hpClass}`} style={{ width: `${pct}%` }} />
-            {c.tempHp ? (
+            <div className={`hp-fill ${hpClass}`} style={{ width: `${hpPct}%` }} />
+            {tempPct > 0 && (
               <div
                 className="hp-temp"
-                style={{
-                  width: `${Math.min(100, (c.tempHp / Math.max(c.max, 1)) * 100)}%`,
-                }}
+                style={{ left: `${hpPct}%`, width: `${tempPct}%` }}
               />
-            ) : null}
+            )}
+            {showNumbers && (
+              <span className="hp-label">
+                {c.hp}/{c.max}
+                {temp > 0 && <span className="hp-temp-label">+{temp}</span>}
+              </span>
+            )}
           </div>
-          {showNumbers && (
-            <span className="hp-num">
-              {c.hp}
-              <span className="hp-sep">/</span>
-              {c.max}
-              {c.tempHp ? <span className="hp-temp-num">+{c.tempHp}</span> : null}
-            </span>
-          )}
         </div>
       </div>
     </li>
