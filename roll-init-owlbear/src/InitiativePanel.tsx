@@ -2,6 +2,7 @@ import { Ref, useEffect, useRef } from "react";
 import { Role } from "./useRole";
 import { BridgeStatus } from "./useBridge";
 import { SyncCombatant, SyncState } from "./types";
+import { conditionIcons } from "./conditionIcons";
 
 interface Props {
   role: Role;
@@ -101,7 +102,26 @@ function Row({
 
       <div className="body">
         <div className="row-top">
-          <span className="name">{c.name}</span>
+          <span className="name-and-status">
+            <span className="name">{c.name}</span>
+            {c.conditions.length > 0 && (
+              <span className="status-icons">
+                {c.conditions.map((cond) => {
+                  const Icon = conditionIcons[cond];
+                  return Icon ? (
+                    <span className="status-icon" key={cond} title={cond}>
+                      <Icon />
+                    </span>
+                  ) : (
+                    // Fallback for any unmapped condition: show its name.
+                    <span className="chip" key={cond} title={cond}>
+                      {cond}
+                    </span>
+                  );
+                })}
+              </span>
+            )}
+          </span>
           <span className="ac" title="Armor Class">
             {c.ac}
           </span>
@@ -128,16 +148,6 @@ function Row({
             </span>
           )}
         </div>
-
-        {c.conditions.length > 0 && (
-          <div className="conditions">
-            {c.conditions.map((cond) => (
-              <span className="chip" key={cond}>
-                {cond}
-              </span>
-            ))}
-          </div>
-        )}
       </div>
     </li>
   );

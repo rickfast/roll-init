@@ -166,11 +166,40 @@ body {
   gap: 8px;
 }
 
+.name-and-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
 .name {
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.status-icons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
+  color: #d7b8e6;
+}
+
+.status-icon {
+  display: inline-flex;
+  font-size: 14px;
+  line-height: 0;
+}
+
+.status-icon svg {
+  width: 14px;
+  height: 14px;
 }
 
 .ac {
