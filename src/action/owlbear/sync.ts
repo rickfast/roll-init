@@ -20,6 +20,8 @@ export interface SyncCombatant {
     /** True for the combatant whose turn it currently is. */
     active: boolean;
     dead: boolean;
+    /** death = failed saves, life = successful saves (0-3 each). */
+    deathSaves: { death: number; life: number };
 }
 
 export interface SyncState {
@@ -57,6 +59,7 @@ function toSync(c: Combatant, active: boolean): SyncCombatant {
         isPlayer: !!c.locked,
         active,
         dead: c.hp <= 0,
+        deathSaves: c.deathSaves ?? { death: 0, life: 0 },
     };
 }
 

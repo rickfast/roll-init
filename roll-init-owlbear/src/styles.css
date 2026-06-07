@@ -145,6 +145,48 @@ body {
   filter: grayscale(0.6);
 }
 
+.row.dying {
+  border-color: var(--hp-low);
+}
+
+.death-saves {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 7px;
+}
+
+.death-saves svg {
+  width: 15px;
+  height: 15px;
+}
+
+.ds-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ds-skull,
+.ds-plus {
+  color: #5a5f6b;
+}
+
+.ds-skull.failed {
+  color: var(--hp-low);
+}
+
+.ds-plus.passed {
+  color: var(--hp-high);
+}
+
+.ds-divider {
+  width: 1px;
+  height: 13px;
+  background: var(--border);
+  margin: 0 2px;
+}
+
 .init {
   flex: 0 0 auto;
   min-width: 26px;

@@ -1,4 +1,6 @@
 import { Ref, useEffect, useRef } from "react";
+import { RiSkullLine } from "react-icons/ri";
+import { FaPlus } from "react-icons/fa";
 import { Role } from "./useRole";
 import { BridgeStatus } from "./useBridge";
 import { SyncCombatant, SyncState } from "./types";
@@ -89,11 +91,18 @@ function Row({
   const scale = Math.max(c.max, c.hp + temp) || 1;
   const hpPct = Math.max(0, (c.hp / scale) * 100);
   const tempPct = temp > 0 ? (temp / scale) * 100 : 0;
+  // A downed PC is dying (rolling death saves), not dead — keep it vivid so the
+  // save colors read clearly. Only non-PCs at 0 HP get the greyed-out treatment.
+  const dying = c.isPlayer && c.hp <= 0;
+  const dead = c.dead && !dying;
+  const saves = c.deathSaves ?? { death: 0, life: 0 };
 
   return (
     <li
       ref={rowRef}
-      className={`row${c.active ? " active" : ""}${c.dead ? " dead" : ""}`}
+      className={`row${c.active ? " active" : ""}${dead ? " dead" : ""}${
+        dying ? " dying" : ""
+      }`}
     >
       <div className="init" title="Initiative">
         {c.initiative}
@@ -143,6 +152,28 @@ function Row({
             )}
           </div>
         </div>
+
+        {dying && (
+          <div className="death-saves" title="Death saves">
+            <span className="ds-group">
+              {[1, 2, 3].map((i) => (
+                <RiSkullLine
+                  key={`d${i}`}
+                  className={`ds-skull${saves.death >= i ? " failed" : ""}`}
+                />
+              ))}
+            </span>
+            <span className="ds-divider" />
+            <span className="ds-group">
+              {[1, 2, 3].map((i) => (
+                <FaPlus
+                  key={`l${i}`}
+                  className={`ds-plus${saves.life >= i ? " passed" : ""}`}
+                />
+              ))}
+            </span>
+          </div>
+        )}
       </div>
     </li>
   );

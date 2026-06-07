@@ -15,6 +15,9 @@ export interface SyncCombatant {
   /** True for the combatant whose turn it currently is. */
   active: boolean;
   dead: boolean;
+  /** death = failed saves, life = successful saves (0-3 each).
+   *  Optional for backward-compatibility with frames sent before this field. */
+  deathSaves?: { death: number; life: number };
 }
 
 export interface SyncState {
